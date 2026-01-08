@@ -1,0 +1,6 @@
+@Platform.NotifyService_HostAddress = http://localhost:5278
+
+GET {{Platform.NotifyService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

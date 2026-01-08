@@ -1,0 +1,9 @@
+<Solution>
+  <Project Path="Platform.AnalyticsService/Platform.Service.Analytics.csproj" />
+  <Project Path="Platform.Auth.Service/Platform.Auth.Service.csproj" />
+  <Project Path="Platform.IdentityService/Platform.Auth.Business.csproj" />
+  <Project Path="Platform.NotifyService/Platform.Service.Notify.csproj" />
+  <Project Path="Platform.OrdersService/Platform.Service.Orders.csproj" />
+  <Project Path="Platform.SearchService/Platform.Service.Search.csproj" />
+  <Project Path="Platform.Service.Business/Platform.Service.Business.csproj" />
+</Solution>

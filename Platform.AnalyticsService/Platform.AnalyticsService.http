@@ -1,0 +1,6 @@
+@Platform.AnalyticsService_HostAddress = http://localhost:5279
+
+GET {{Platform.AnalyticsService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
