@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Platform.Auth.Service.Dto;
-using Platform.Auth.Service.Interfaces;
+using Platform.Auth.Service.Api.Dto;
+using Platform.Auth.Service.Application.Security;
 
 namespace Platform.Auth.Service.Controllers;
 

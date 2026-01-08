@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-
 namespace Platform.Service.Business.Infrastructure.Security;
 
 public interface IRsaKeyManager

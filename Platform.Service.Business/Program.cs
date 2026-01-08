@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Platform.Service.Business.Application;
 using Platform.Service.Business.Application.Security;
@@ -14,9 +15,11 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Инициализируем RSA ключи
 builder.Services.AddSingleton<IRsaKeyManager, RsaKeyManager>();
 var rsaKeyManager = new RsaKeyManager(builder.Configuration);
+
+builder.Services.AddDbContext<BusinessContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("ConnectionStrings:Postgres")));
 
 builder.Services
     .AddAuthentication()
@@ -100,20 +103,19 @@ builder.Services.AddHttpClient<IAuthClient, AuthHttpClient>("AuthService", clien
     client.BaseAddress = new Uri(url);
     client.Timeout = TimeSpan.FromSeconds(10);
 });
+builder.Services.AddHttpClient("InternalServices").AddHttpMessageHandler<PollyDelegatingHandler>();
 
-builder.Services.AddHttpClient("InternalServices")
-    .AddHttpMessageHandler<PollyDelegatingHandler>();
+builder.Services.AddHostedService<GetAuthTokenOnStartHosted>();
+builder.Services.AddSingleton<IServiceTokenProvider, ServiceTokenProvider>();
+builder.Services.AddSingleton<IAsyncPolicy<HttpResponseMessage>>(PollyPolicies.BuildPolicy());
+builder.Services.AddTransient<PollyDelegatingHandler>();
+
+builder.Services.AddScoped<BusinessService>();
+builder.Services.AddScoped<IBusinessRepository, BusinessRepository>();
 
 builder.Services.AddLogging();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
-
-builder.Services.AddSingleton<IServiceTokenProvider, ServiceTokenProvider>();
-builder.Services.AddSingleton<IAsyncPolicy<HttpResponseMessage>>(PollyPolicies.BuildPolicy());
-builder.Services.AddTransient<PollyDelegatingHandler>();
-builder.Services.AddScoped<BusinessService>();
-builder.Services.AddScoped<IBusinessRepository, BusinessRepository>();
-builder.Services.AddHostedService<GetAuthTokenOnStartHosted>();
 
 var app = builder.Build();
 

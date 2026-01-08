@@ -1,11 +1,10 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using Platform.Auth.Service.Interfaces;
-using Platform.Auth.Service.Results;
+using Platform.Auth.Service.Application.Security;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 
-namespace Platform.Auth.Service;
+namespace Platform.Auth.Service.Infrastructure;
 
 public class ServiceTokenIssuer : IServiceTokenIssuer
 {

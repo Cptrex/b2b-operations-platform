@@ -1,4 +1,4 @@
-﻿namespace Platform.Auth.Service.Interfaces;
+﻿namespace Platform.Auth.Service.Application.Security;
 
 public interface IServiceCredentialStore
 {

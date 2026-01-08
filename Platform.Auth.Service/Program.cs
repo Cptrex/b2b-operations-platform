@@ -1,5 +1,5 @@
-using Platform.Auth.Service;
-using Platform.Auth.Service.Interfaces;
+using Platform.Auth.Service.Application.Security;
+using Platform.Auth.Service.Infrastructure;
 using System.Security.Cryptography;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,7 +24,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
-builder.Services.AddSingleton<IServiceCredentialStore, ServiceCredentialStore>();
+builder.Services.AddSingleton<IServiceCredentialStore, ServiceTokenCredentialStore>();
 builder.Services.AddScoped<IServiceTokenIssuer, ServiceTokenIssuer>();
 
 var app = builder.Build();

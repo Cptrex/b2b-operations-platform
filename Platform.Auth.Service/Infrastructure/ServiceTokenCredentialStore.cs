@@ -1,12 +1,12 @@
-﻿using Platform.Auth.Service.Interfaces;
+﻿using Platform.Auth.Service.Application.Security;
 
-namespace Platform.Auth.Service;
+namespace Platform.Auth.Service.Infrastructure;
 
-public class ServiceCredentialStore : IServiceCredentialStore
+public class ServiceTokenCredentialStore : IServiceCredentialStore
 {
     private readonly Dictionary<string, string> _services = [];
 
-    public ServiceCredentialStore(IConfiguration config)
+    public ServiceTokenCredentialStore(IConfiguration config)
     {
         _services = config
                    .GetSection("SERVICE_CREDENTIALS")
