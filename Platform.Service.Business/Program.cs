@@ -15,16 +15,15 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 builder.Services.AddDbContext<BusinessContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("ConnectionStrings:Postgres")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
 
 builder.Services
     .AddAuthentication()
     .AddJwtBearer("ServiceBearer", options =>
         {
             var authPublicKeyPath = builder.Configuration["ServiceJwt:PublicKeyPath"] ?? "auth_service_public.pem";
-            
+
             if (!File.Exists(authPublicKeyPath))
             {
                 Console.WriteLine($"Warning: Auth.Service public key not found at {authPublicKeyPath}. Will be fetched on first token request.");
@@ -123,6 +122,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 

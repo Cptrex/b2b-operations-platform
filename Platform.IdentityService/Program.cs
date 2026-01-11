@@ -8,7 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 var privateKeyPath = builder.Configuration["ClientJwt:PrivateKeyPath"] ?? "business_private.pem";
 var publicKeyPath = builder.Configuration["ClientJwt:PublicKeyPath"] ?? "business_public.pem";
 
-RsaKeyPairGenerator.GenerateToken(privateKeyPath, publicKeyPath);
+if ((!File.Exists(privateKeyPath) || !File.Exists(publicKeyPath)) && builder.Environment.IsDevelopment())
+{
+    RsaKeyPairGenerator.GenerateToken(privateKeyPath, publicKeyPath);
+}
 
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
@@ -25,6 +28,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
