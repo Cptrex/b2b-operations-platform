@@ -10,6 +10,7 @@ var publicKeyPath = builder.Configuration["ServiceJwt:PublicKeyPath"] ?? "servic
 
 RsaKeyPairGenerator.GenerateToken(privateKeyPath, publicKeyPath);
 
+builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();

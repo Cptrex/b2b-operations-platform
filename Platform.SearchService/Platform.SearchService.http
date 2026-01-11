@@ -1,6 +1,0 @@
-@Platform.SearchService_HostAddress = http://localhost:5244
-
-GET {{Platform.SearchService_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
