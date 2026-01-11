@@ -18,7 +18,7 @@ public static class AddRsaTokenPairExtension
                 options.Issuer = section["Issuer"];
                 options.PrivateKeyPath = section["PrivateKeyPath"];
                 options.PublicKeyPath = section["PublicKeyPath"];
-                options.ExpiresMinutes = int.TryParse(section["ExpiresMinutes"], out var m) ? m : 0;
+                options.ExpiresMinutes = int.TryParse(section["ExpiresAccessTokenMinutes"], out var m) ? m : 0;
             });
 
             services.AddSingleton<ITokenIssuer, RsaTokenIssuer>();

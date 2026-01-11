@@ -79,6 +79,7 @@ public sealed class RsaTokenIssuer : ITokenIssuer
         };
 
         var signingKey = new RsaSecurityKey(_rsa!);
+
         var token = new JwtSecurityToken(
             issuer: issuer,
             claims: claims,
