@@ -1,10 +1,6 @@
-namespace Platform.Service.Business.Infrastructure.Security;
+using Platform.Service.Business.Application.Security;
 
-public interface IRsaKeyManager
-{
-    void SaveAuthServicePublicKey(string publicKey);
-    string? GetAuthServicePublicKey();
-}
+namespace Platform.Service.Business.Infrastructure.Security;
 
 public class RsaKeyManager : IRsaKeyManager
 {
@@ -13,7 +9,7 @@ public class RsaKeyManager : IRsaKeyManager
 
     public RsaKeyManager(IConfiguration config)
     {
-        _authPublicKeyPath = config["ServiceJwt:AuthServicePublicKeyPath"] ?? "auth_service_public.pem";
+        _authPublicKeyPath = config["ServiceJwt:PublicKeyPath"] ?? "auth_business_public.pem";
         LoadAuthServicePublicKey();
     }
 
@@ -34,7 +30,9 @@ public class RsaKeyManager : IRsaKeyManager
         }
 
         File.WriteAllText(_authPublicKeyPath, publicKey);
+
         _authPublicKey = publicKey;
+
         Console.WriteLine($"Saved Auth.Service public key to: {_authPublicKeyPath}");
     }
 

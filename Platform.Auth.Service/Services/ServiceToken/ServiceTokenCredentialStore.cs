@@ -1,6 +1,6 @@
-﻿using Platform.Auth.Service.Application.Security;
+﻿using Platform.Auth.Service.Services.ServiceToken.Contracts;
 
-namespace Platform.Auth.Service.Infrastructure;
+namespace Platform.Auth.Service.Services.ServiceToken;
 
 public class ServiceTokenCredentialStore : IServiceCredentialStore
 {

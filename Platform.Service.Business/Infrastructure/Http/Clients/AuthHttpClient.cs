@@ -1,9 +1,9 @@
 ﻿using Platform.Service.Business.Application;
-using Platform.Service.Business.Infrastructure.Security;
 using Platform.Service.Business.Application.Security.Dto;
 using Platform.Service.Business.Infrastructure.Http.Dtos;
 using System.Text;
 using System.Text.Json;
+using Platform.Service.Business.Application.Security;
 
 namespace Platform.Service.Business.Infrastructure.Http.Clients;
 
@@ -46,7 +46,6 @@ public class AuthHttpClient : IAuthClient
 
         var dto = await response.Content.ReadFromJsonAsync<AuthTokenResponseDto>() ?? throw new InvalidOperationException("Empty auth response");
 
-        // Сохраняем публичный ключ Auth.Service
         _rsaKeyManager.SaveAuthServicePublicKey(dto.PublicKey);
 
         return new ServiceTokenResult(dto.Token, dto.ExpiresAt, dto.PublicKey);

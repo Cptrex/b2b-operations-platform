@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Platform.Auth.Service.Api.Dto;
-using Platform.Auth.Service.Application.Security;
+using Paltform.Auth.Shared.JwtToken.Results;
+using Platform.Auth.Service.Dto;
+using Platform.Auth.Service.Services.ServiceToken.Contracts;
 
 namespace Platform.Auth.Service.Controllers;
 
@@ -9,9 +10,9 @@ namespace Platform.Auth.Service.Controllers;
 public class TokenController : ControllerBase
 {
     private readonly IServiceCredentialStore _store;
-    private readonly IServiceTokenIssuer _issuer;
-
-    public TokenController(IServiceCredentialStore store, IServiceTokenIssuer issuer)
+    private readonly ITokenIssuer _issuer;
+   
+    public TokenController(IServiceCredentialStore store, ITokenIssuer issuer)
     {
         _store = store;
         _issuer = issuer;
@@ -27,7 +28,7 @@ public class TokenController : ControllerBase
             return Unauthorized();
         }
 
-        var token = _issuer.Issue(request.ServiceId);
+        var token = _issuer.ServiceIssue(request.ServiceId);
         var publicKey = _issuer.GetPublicKey();
 
         return Ok(new AuthResponseDto(

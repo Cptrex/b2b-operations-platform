@@ -1,0 +1,28 @@
+# RSA keys - do not commit
+service_private.pem
+service_public.pem
+auth_service_public.pem
+
+# Environment variables - do not commit real secrets
+.env
+.env.*
+
+# Build results
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio
+.vs/
+
+# Rider
+.idea/
+
+# Logs
+logs/
+*.log

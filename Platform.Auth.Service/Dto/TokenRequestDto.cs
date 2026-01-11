@@ -1,3 +1,3 @@
-﻿namespace Platform.Auth.Service.Api.Dto;
+﻿namespace Platform.Auth.Service.Dto;
 
 public sealed record TokenRequestDto(string ServiceId, string Secret);

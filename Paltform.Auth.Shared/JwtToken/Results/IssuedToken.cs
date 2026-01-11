@@ -1,3 +1,3 @@
-﻿namespace Platform.Auth.Service.Application.Security;
+﻿namespace Paltform.Auth.Shared.JwtToken.Results;
 
 public sealed record IssuedToken(string Token, DateTimeOffset ExpiresAt);

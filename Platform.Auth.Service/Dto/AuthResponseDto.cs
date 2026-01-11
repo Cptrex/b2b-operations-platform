@@ -1,3 +1,3 @@
-﻿namespace Platform.Auth.Service.Api.Dto;
+﻿namespace Platform.Auth.Service.Dto;
 
 public sealed record AuthResponseDto(string Token, DateTimeOffset ExpiresAt, string PublicKey);

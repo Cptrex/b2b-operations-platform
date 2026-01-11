@@ -1,4 +1,4 @@
-﻿namespace Platform.Auth.Service.Application.Security;
+﻿namespace Platform.Auth.Service.Services.ServiceToken.Contracts;
 
 public interface IServiceCredentialStore
 {

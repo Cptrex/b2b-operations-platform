@@ -1,4 +1,4 @@
-﻿namespace Platform.Auth.Business.Dto;
+﻿namespace Platform.Auth.Business.Api.Dto;
 
 public class AuthUserDto
 {

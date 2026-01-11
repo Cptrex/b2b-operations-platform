@@ -15,8 +15,6 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton<IRsaKeyManager, RsaKeyManager>();
-var rsaKeyManager = new RsaKeyManager(builder.Configuration);
 
 builder.Services.AddDbContext<BusinessContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("ConnectionStrings:Postgres")));
@@ -25,13 +23,11 @@ builder.Services
     .AddAuthentication()
     .AddJwtBearer("ServiceBearer", options =>
         {
-            var authPublicKeyPath = builder.Configuration["ServiceJwt:AuthServicePublicKeyPath"] ?? "auth_service_public.pem";
+            var authPublicKeyPath = builder.Configuration["ServiceJwt:PublicKeyPath"] ?? "auth_service_public.pem";
             
-            // Проверяем, существует ли файл с публичным ключом Auth.Service
             if (!File.Exists(authPublicKeyPath))
             {
                 Console.WriteLine($"Warning: Auth.Service public key not found at {authPublicKeyPath}. Will be fetched on first token request.");
-                // Создаем временный ключ для инициализации, будет обновлен при получении токена
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = false,
@@ -105,13 +101,16 @@ builder.Services.AddHttpClient<IAuthClient, AuthHttpClient>("AuthService", clien
 });
 builder.Services.AddHttpClient("InternalServices").AddHttpMessageHandler<PollyDelegatingHandler>();
 
-builder.Services.AddHostedService<GetAuthTokenOnStartHosted>();
+builder.Services.AddSingleton<IRsaKeyManager, RsaKeyManager>();
 builder.Services.AddSingleton<IServiceTokenProvider, ServiceTokenProvider>();
 builder.Services.AddSingleton<IAsyncPolicy<HttpResponseMessage>>(PollyPolicies.BuildPolicy());
+
 builder.Services.AddTransient<PollyDelegatingHandler>();
 
 builder.Services.AddScoped<BusinessService>();
 builder.Services.AddScoped<IBusinessRepository, BusinessRepository>();
+
+builder.Services.AddHostedService<GetAuthTokenOnStartHosted>();
 
 builder.Services.AddLogging();
 builder.Services.AddControllers();
