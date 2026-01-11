@@ -1,5 +1,6 @@
 using Paltform.Auth.Shared.Cryptography;
 using Paltform.Auth.Shared.JwtToken.Extensions;
+using Platform.Auth.Business.Application;
 using Platform.Auth.Business.Domain.Account;
 using Platform.Auth.Business.Infrasturcture.Db;
 
@@ -18,6 +19,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
+builder.Services.AddScoped<AuthorizationService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddRsaTokenIssuer(builder.Configuration, "ClientJwt");
 

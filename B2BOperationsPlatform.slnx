@@ -7,4 +7,5 @@
   <Project Path="Platform.OrdersService/Platform.Service.Orders.csproj" />
   <Project Path="Platform.SearchService/Platform.Service.Search.csproj" />
   <Project Path="Platform.Service.Business/Platform.Service.Business.csproj" />
+  <Project Path="Platform.Shared.Results/Platform.Shared.Results.csproj" Id="354e459c-9099-4324-bd10-2f806fcd4f89" />
 </Solution>

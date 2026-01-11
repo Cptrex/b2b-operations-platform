@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Paltform.Auth.Shared\Paltform.Auth.Shared.csproj" />
+    <ProjectReference Include="..\Platform.Shared.Results\Platform.Shared.Results.csproj" />
   </ItemGroup>
 
 </Project>
