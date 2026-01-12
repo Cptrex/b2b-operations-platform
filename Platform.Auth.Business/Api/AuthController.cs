@@ -9,19 +9,20 @@ namespace Platform.Auth.Business.Api;
 public class AuthController : ControllerBase
 {
     private readonly AuthorizationService _authService;
+
     public AuthController(AuthorizationService service)
     {
         _authService = service;
     }
 
-    [HttpPost("token/auth")]
+    [HttpPost("token")]
     public async Task<IActionResult> Auth(AuthUserDto dto, CancellationToken cancellation) 
     {
-        var result = await _authService.TryAuthorize(dto.Login, dto.Password, dto.BusinessId, cancellation);
+        var result = await _authService.Authorize(dto.Login, dto.Password, dto.BusinessId, cancellation);
         
         if (!result.IsSuccess)
         {
-            return BadRequest(result);
+            return Unauthorized(result);
         }
 
         return Ok(result);

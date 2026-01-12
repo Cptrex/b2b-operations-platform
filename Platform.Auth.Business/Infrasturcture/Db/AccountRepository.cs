@@ -1,4 +1,4 @@
-﻿using MongoDB.Driver.Linq;
+﻿using Microsoft.EntityFrameworkCore;
 using Platform.Auth.Business.Domain.Account;
 
 namespace Platform.Auth.Business.Infrasturcture.Db;
@@ -12,7 +12,7 @@ public class AccountRepository : IAccountRepository
         _context = context;
     }
 
-    public async Task<Account?> CreateAsync(Account account)
+    public async Task<Account?> CreateAsync(Account account, CancellationToken cancellationToken)
     {
         var addedAccount = await _context.Accounts.AddAsync(account);
 
@@ -21,8 +21,14 @@ public class AccountRepository : IAccountRepository
         return addedAccount.Entity;
     }
 
-    public async Task<Account?> GetByIdAsync(int accountId, string businessId)
+    public async Task<Account?> GetByIdAsync(int accountId, string businessId, CancellationToken cancellationToken)
     {
         return await _context.Accounts.FirstOrDefaultAsync(acc => acc.Id == accountId && acc.BusinessId == businessId);
+
+    }
+
+    public async Task<Account?> GetByLoginAsync(string login, string businessId, CancellationToken cancellationToken)
+    {
+        return await _context.Accounts.FirstOrDefaultAsync(acc => acc.Login == login && acc.BusinessId == businessId, cancellationToken);
     }
 }

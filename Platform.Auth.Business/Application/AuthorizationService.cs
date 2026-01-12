@@ -1,4 +1,4 @@
-﻿using Paltform.Auth.Shared.JwtToken.Results;
+﻿using Paltform.Auth.Shared.JwtToken.Contracts;
 using Platform.Auth.Business.Domain.Account;
 using Platform.Shared.Results;
 using Platform.Shared.Results.Enums;
@@ -7,16 +7,18 @@ namespace Platform.Auth.Business.Application;
 
 public class AuthorizationService
 {
-    private readonly IAccountRepository _accountRepository;
-    private readonly ITokenIssuer _tokenIssuer;
+    readonly IAccountRepository _accountRepository;
+    readonly IClientTokenIssuer _tokenIssuer;
+    readonly IPasswordService _passwordService;
 
-    public AuthorizationService(IAccountRepository accountRepository, ITokenIssuer issuer)
+    public AuthorizationService(IAccountRepository accountRepository, IClientTokenIssuer issuer, IPasswordService passwordService)
     {
         _accountRepository = accountRepository;
         _tokenIssuer = issuer;
+        _passwordService = passwordService;
     }
 
-    public async Task<Result> TryAuthorize(string login, string password, string businessId, CancellationToken cancellationToken)
+    public async Task<Result<IssuedTokens>> Authorize(string login, string password, string businessId, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(login))
         {
@@ -28,25 +30,33 @@ public class AuthorizationService
             throw new ArgumentException("Business id cant be empty", nameof(businessId));
         }
 
-        var foundAccount = await _accountRepository.GetByLoginAsync(login, password, businessId, cancellationToken);
+        var foundAccount = await _accountRepository.GetByLoginAsync(login, businessId, cancellationToken);
 
         if (foundAccount is null)
         {
-            return Result.Fail(new Error("Account with the provided login and business id was not found.", ResultErrorCategory.NotFound));
+            return Result<IssuedTokens>.Fail(new Error("Account with the provided login and business id was not found.", ResultErrorCategory.NotFound));
         }
 
-        return Result.Ok();
+        if (_passwordService.Verify(password, foundAccount.Password.Hash) == false)
+        {
+            return Result<IssuedTokens>.Fail(new Error("Login or password are incorrect", ResultErrorCategory.Unauthorized));
+        }
+
+        var issuedAccessToken = IssueUserToken(foundAccount);
+
+        return Result<IssuedTokens>.Ok(issuedAccessToken);
     }
 
-    public async Task<Result<IssuedToken>> IssueUserToken(Account account)
+    IssuedTokens IssueUserToken(Account account)
     {
         if (account is null)
         {
             throw new ArgumentNullException(nameof(account));
         }
 
-        var issuedToken = _tokenIssuer.UserIssue(account.Login);
+        var issuedAccessToken = _tokenIssuer.IssueAccessToken(account.Login);
+        var issuedRefreshToken = _tokenIssuer.IssueRefreshToken(account.Login);
 
-        return Result<IssuedToken>.Ok(issuedToken);
+        return new IssuedTokens(issuedAccessToken, issuedRefreshToken);
     }
 }

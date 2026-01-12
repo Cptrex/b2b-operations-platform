@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Paltform.Auth.Shared.JwtToken.Results;
+using Paltform.Auth.Shared.JwtToken.Contracts;
 using Platform.Auth.Service.Dto;
 using Platform.Auth.Service.Services.ServiceToken.Contracts;
 
@@ -10,9 +10,9 @@ namespace Platform.Auth.Service.Controllers;
 public class TokenController : ControllerBase
 {
     private readonly IServiceCredentialStore _store;
-    private readonly ITokenIssuer _issuer;
+    private readonly IServiceTokenIssuer _issuer;
    
-    public TokenController(IServiceCredentialStore store, ITokenIssuer issuer)
+    public TokenController(IServiceCredentialStore store, IServiceTokenIssuer issuer)
     {
         _store = store;
         _issuer = issuer;

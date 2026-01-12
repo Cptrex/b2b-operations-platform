@@ -9,14 +9,23 @@ public class Account
     public string Login { get; private set; }
     public string Name { get; private set; }
     public Email Email { get; private set; }
-    public string Password { get; private set; }
+    public PasswordHash Password { get; private set; }
 
-    internal Account(int id, string login, string name, string email, string password)
+    private Account() { }
+
+    public Account(
+        int id,
+        string businessId,
+        string login,
+        string name,
+        Email email,
+        PasswordHash password)
     {
         Id = id;
+        BusinessId = businessId;
         Login = login;
         Name = name;
-        Email = Email.Create(email);
+        Email = email;
         Password = password;
     }
 }

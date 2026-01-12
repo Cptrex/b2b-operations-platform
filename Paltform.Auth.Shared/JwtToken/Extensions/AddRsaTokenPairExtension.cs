@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Paltform.Auth.Shared.JwtToken.Options;
-using Paltform.Auth.Shared.JwtToken.Results;
+using Paltform.Auth.Shared.JwtToken.Contracts;
 
 namespace Paltform.Auth.Shared.JwtToken.Extensions;
 
@@ -9,7 +9,7 @@ public static class AddRsaTokenPairExtension
 {
     extension(IServiceCollection services)
     {
-        public IServiceCollection AddRsaTokenIssuer(IConfiguration config, string sectionName)
+        public IServiceCollection AddServiceTokenIssuer(IConfiguration config, string sectionName)
         {
             var section = config.GetSection(sectionName);
 
@@ -18,10 +18,29 @@ public static class AddRsaTokenPairExtension
                 options.Issuer = section["Issuer"];
                 options.PrivateKeyPath = section["PrivateKeyPath"];
                 options.PublicKeyPath = section["PublicKeyPath"];
-                options.ExpiresMinutes = int.TryParse(section["ExpiresAccessTokenMinutes"], out var m) ? m : 0;
+                options.ExpiresAccessTokenMinutes = int.TryParse(section["ExpiresAccessTokenMinutes"], out var at) ? at : 0;
+                options.ExpiresRefreshTokenMinutes = int.TryParse(section["ExpiresRefreshTokenMinutes"], out var rt) ? rt : 0;
             });
 
-            services.AddSingleton<ITokenIssuer, RsaTokenIssuer>();
+            services.AddSingleton<IServiceTokenIssuer, RsaServiceTokenIssuer>();
+
+            return services;
+        }
+
+        public IServiceCollection AddClientTokenIssuer(IConfiguration config, string sectionName)
+        {
+            var section = config.GetSection(sectionName);
+
+            services.Configure<TokenOptions>(options =>
+            {
+                options.Issuer = section["Issuer"];
+                options.PrivateKeyPath = section["PrivateKeyPath"];
+                options.PublicKeyPath = section["PublicKeyPath"];
+                options.ExpiresAccessTokenMinutes = int.TryParse(section["ExpiresAccessTokenMinutes"], out var at) ? at : 0;
+                options.ExpiresRefreshTokenMinutes = int.TryParse(section["ExpiresRefreshTokenMinutes"], out var rt) ? rt : 0;
+            });
+
+            services.AddSingleton<IClientTokenIssuer, RsaClientTokenIssuer>();
 
             return services;
         }

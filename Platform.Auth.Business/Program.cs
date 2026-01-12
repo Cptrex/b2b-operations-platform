@@ -1,7 +1,9 @@
+using Microsoft.EntityFrameworkCore;
 using Paltform.Auth.Shared.Cryptography;
 using Paltform.Auth.Shared.JwtToken.Extensions;
 using Platform.Auth.Business.Application;
 using Platform.Auth.Business.Domain.Account;
+using Platform.Auth.Business.Infrasturcture.Cache;
 using Platform.Auth.Business.Infrasturcture.Db;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,7 +15,7 @@ if ((!File.Exists(privateKeyPath) || !File.Exists(publicKeyPath)) && builder.Env
 {
     RsaKeyPairGenerator.GenerateToken(privateKeyPath, publicKeyPath);
 }
-
+builder.Services.AddDbContext<AuthBusinessContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
@@ -21,7 +23,10 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<AuthorizationService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
-builder.Services.AddRsaTokenIssuer(builder.Configuration, "ClientJwt");
+
+builder.Services.AddSingleton<IPasswordService, PasswordService>();
+
+builder.Services.AddClientTokenIssuer(builder.Configuration, "ClientJwt");
 
 var app = builder.Build();
 
