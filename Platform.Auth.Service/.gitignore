@@ -1,10 +1,10 @@
-# RSA ключи - не коммитим в git
-service_private.pem
-service_public.pem
-auth_service_public.pem
+# Ignore PEM key files
+*.pem
 
-# Environment variables - не коммитим реальные секреты
+# Ignore environment files (keep .env.example in repo)
 .env
+.env.*
+!.env.example
 
 # Build results
 bin/
@@ -17,15 +17,9 @@ out/
 *.userosscache
 *.sln.docstates
 
-# Visual Studio
+# IDE folders
 .vs/
-
-# Rider
 .idea/
-
-# Environment variables
-.env.local
-.env.production.local
 
 # Logs
 logs/

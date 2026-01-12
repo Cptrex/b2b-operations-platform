@@ -16,16 +16,26 @@ public class AuthorizationService
         _tokenIssuer = issuer;
     }
 
-    public async Task<Result> TryAuthorize(string login, string businessId, CancellationToken cancellationToken)
+    public async Task<Result> TryAuthorize(string login, string password, string businessId, CancellationToken cancellationToken)
     {
-       var foundAccount = await _accountRepository.GetByLoginAsync(login, businessId, cancellationToken);
+        if (string.IsNullOrWhiteSpace(login))
+        {
+            throw new ArgumentException("Login cant be empty", nameof(login));
+        }
 
-       if (foundAccount is null)
-       {
-          return Result.Fail(new Error("Account with the provided login and business id was not found.", ResultErrorCategory.NotFound));
-       }
+        if (string.IsNullOrWhiteSpace(businessId))
+        {
+            throw new ArgumentException("Business id cant be empty", nameof(businessId));
+        }
 
-       return Result.Ok();
+        var foundAccount = await _accountRepository.GetByLoginAsync(login, password, businessId, cancellationToken);
+
+        if (foundAccount is null)
+        {
+            return Result.Fail(new Error("Account with the provided login and business id was not found.", ResultErrorCategory.NotFound));
+        }
+
+        return Result.Ok();
     }
 
     public async Task<Result<IssuedToken>> IssueUserToken(Account account)

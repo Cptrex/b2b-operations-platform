@@ -1,15 +1,15 @@
-# RSA keys - do not commit
-service_private.pem
-service_public.pem
-auth_service_public.pem
+# Ignore PEM key files
+*.pem
 
-# Environment variables - do not commit real secrets
+# Ignore environment files (keep .env.example in repo)
 .env
 .env.*
+!.env.example
 
 # Build results
 bin/
 obj/
+out/
 
 # User-specific files
 *.user
@@ -17,10 +17,8 @@ obj/
 *.userosscache
 *.sln.docstates
 
-# Visual Studio
+# IDE folders
 .vs/
-
-# Rider
 .idea/
 
 # Logs
