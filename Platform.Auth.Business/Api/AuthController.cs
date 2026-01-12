@@ -2,7 +2,7 @@
 using Platform.Auth.Business.Api.Dto;
 using Platform.Auth.Business.Application;
 
-namespace Platform.IdentityService.Api;
+namespace Platform.Auth.Business.Api;
 
 [ApiController]
 [Route("api/v1/[controller]")]
