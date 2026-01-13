@@ -1,11 +1,13 @@
 <Solution>
   <Project Path="Paltform.Auth.Shared/Paltform.Auth.Shared.csproj" Id="9c099a90-e3fd-4561-8689-e2a517c5c4b3" />
-  <Project Path="Platform.Service.Analytics/Platform.Service.Analytics.csproj" />
-  <Project Path="Platform.Auth.Service/Platform.Auth.Service.csproj" />
   <Project Path="Platform.Auth.Business/Platform.Auth.Business.csproj" />
+  <Project Path="Platform.Auth.Service/Platform.Auth.Service.csproj" />
+  <Project Path="Platform.Service.Analytics/Platform.Service.Analytics.csproj" />
+  <Project Path="Platform.Service.Business/Platform.Service.Business.csproj" />
   <Project Path="Platform.Service.Notify/Platform.Service.Notify.csproj" />
   <Project Path="Platform.Service.Orders/Platform.Service.Orders.csproj" />
   <Project Path="Platform.Service.Search/Platform.Service.Search.csproj" />
-  <Project Path="Platform.Service.Business/Platform.Service.Business.csproj" />
+  <Project Path="Platform.Shared.Cache.Keys/Platform.Shared.Cache.Keys.csproj" Id="cabde105-6b49-40c0-811d-933412a4571f" />
+  <Project Path="Platform.Shared.Cache/Platform.Shared.Cache.csproj" Id="94464aab-e3fe-4464-aed5-763ba9511bff" />
   <Project Path="Platform.Shared.Results/Platform.Shared.Results.csproj" Id="354e459c-9099-4324-bd10-2f806fcd4f89" />
 </Solution>

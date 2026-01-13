@@ -16,4 +16,10 @@
     <PackageReference Include="Polly" Version="8.6.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Platform.Shared.Cache.Keys\Platform.Shared.Cache.Keys.csproj" />
+    <ProjectReference Include="..\Platform.Shared.Cache\Platform.Shared.Cache.csproj" />
+    <ProjectReference Include="..\Platform.Shared.Results\Platform.Shared.Results.csproj" />
+  </ItemGroup>
+
 </Project>
