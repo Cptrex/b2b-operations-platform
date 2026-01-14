@@ -4,13 +4,13 @@ using System.Collections.Concurrent;
 
 namespace Platform.Auth.Business.Infrasturcture.Messaging;
 
-public class AuthBusinessRabbitMqMessageHandler : IRabbitMqMessageHandler
+public class AuthBusinessRabbitMqMessageConsumer : IRabbitMqMessageConsumer
 {
     private readonly ConcurrentDictionary<string, Func<string, CancellationToken, Task>> _routingKeyHandlers = [];
 
     private readonly AuthBusinessContext _context;
 
-    public AuthBusinessRabbitMqMessageHandler(AuthBusinessContext context)
+    public AuthBusinessRabbitMqMessageConsumer(AuthBusinessContext context)
     {
         _context = context;
 

@@ -6,13 +6,13 @@ using System.Text.Json;
 
 namespace Platform.Service.Business.Infrastructure.Messaging;
 
-public class BusinessRabbitMqHandler : IRabbitMqMessageHandler
+public class BusinessRabbitMqConsumer : IRabbitMqMessageConsumer
 {
     private readonly ConcurrentDictionary<string, Func<string, CancellationToken, Task>> _routingKeyHandlers = [];
 
     private readonly BusinessContext _businessContext;
 
-    public BusinessRabbitMqHandler(BusinessContext businessContext)
+    public BusinessRabbitMqConsumer(BusinessContext businessContext)
     {
         _businessContext = businessContext;
 
@@ -47,15 +47,12 @@ public class BusinessRabbitMqHandler : IRabbitMqMessageHandler
 
         await _businessContext.SaveChangesAsync(ct);
     }
+
     private async Task HandleUserUpdated(string json, CancellationToken ct)
     {
     }
+
     private async Task HandleUserDeleted(string json, CancellationToken ct)
     {
-    }
-
-    Task IRabbitMqMessageHandler.HandleAsync(string routingKey, string body, CancellationToken ct)
-    {
-        throw new NotImplementedException();
     }
 }

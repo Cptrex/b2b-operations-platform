@@ -5,6 +5,7 @@ using Platform.Auth.Business.Application;
 using Platform.Auth.Business.Domain.Account;
 using Platform.Auth.Business.Infrasturcture.Cache;
 using Platform.Auth.Business.Infrasturcture.Db;
+using Platform.Auth.Business.Infrasturcture.Messaging;
 using Platform.Shared.Cache.Extensions;
 using Platform.Shared.Messaging.Contracts;
 using Platform.Shared.Messaging.Extensions;
@@ -36,8 +37,10 @@ builder.Services.AddRadisCacheProvider(builder.Configuration);
 
 builder.Services.AddHostedService<UploadCacheJwtValidationPublicKeyHosted>();
 
-builder.Services.AddRabbitMq(builder.Configuration);
-builder.Services.AddSingleton<IRabbitMqMessageHandler, AuthBusinessRabbitMqMessageHandler>();
+builder.Services.AddRabbitMqConsumer(builder.Configuration);
+builder.Services.AddRabbitMqPublisher(builder.Configuration);
+
+builder.Services.AddSingleton<IRabbitMqMessageConsumer, AuthBusinessRabbitMqMessageConsumer>();
 
 var app = builder.Build();
 

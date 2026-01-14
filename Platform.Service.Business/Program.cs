@@ -56,28 +56,48 @@ builder.Services
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new RsaSecurityKey(rsa),
 
-                    ValidAlgorithms = new[] { SecurityAlgorithms.RsaSha256 }
+                    ValidAlgorithms = [SecurityAlgorithms.RsaSha256]
                 };
             }
         })
     .AddJwtBearer("ClientBearer", options =>
         {
-            options.TokenValidationParameters = new TokenValidationParameters
+            var businessPublicKeyPath = builder.Configuration["ClientJwt:PublicKeyPath"] ?? "auth_business_public.pem";
+
+            if (!File.Exists(businessPublicKeyPath))
             {
-                ValidateIssuer = true,
-                ValidIssuer = builder.Configuration["ClientJwt:Issuer"],
+                Console.WriteLine($"Warning: Auth.Business public key not found at {businessPublicKeyPath}. Client authentication will fail.");
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = false,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = false
+                };
+            }
+            else
+            {
+                var publicKeyPem = File.ReadAllText(businessPublicKeyPath);
+                var rsa = RSA.Create();
+                rsa.ImportFromPem(publicKeyPem);
 
-                ValidateAudience = true,
-                ValidAudience = builder.Configuration["ClientJwt:Audience"],
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = builder.Configuration["ClientJwt:Issuer"] ?? "auth.business",
 
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.FromSeconds(30),
+                    ValidateAudience = true,
+                    ValidAudience = builder.Configuration["ClientJwt:Audience"] ?? "platform",
 
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(builder.Configuration["ClientJwt:Secret"]!)
-                )
-            };
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.FromSeconds(30),
+
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new RsaSecurityKey(rsa),
+
+                    ValidAlgorithms = [SecurityAlgorithms.RsaSha256]
+                };
+            }
         });
 
 builder.Services.AddAuthorizationBuilder()
@@ -111,8 +131,9 @@ builder.Services.AddTransient<PollyDelegatingHandler>();
 builder.Services.AddScoped<BusinessService>();
 builder.Services.AddScoped<IBusinessRepository, BusinessRepository>();
 
-builder.Services.AddRabbitMq(builder.Configuration);
-builder.Services.AddSingleton<IRabbitMqMessageHandler, BusinessRabbitMqHandler>();
+builder.Services.AddRabbitMqConsumer(builder.Configuration);
+builder.Services.AddRabbitMqPublisher(builder.Configuration);
+builder.Services.AddSingleton<IRabbitMqMessageConsumer, BusinessRabbitMqConsumer>();
 
 builder.Services.AddHostedService<GetAuthTokenOnStartHosted>();
 

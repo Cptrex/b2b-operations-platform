@@ -12,11 +12,11 @@ public sealed class RabbitMqConsumerHostedService : BackgroundService
 {
     private readonly IConnection _connection;
     private readonly RabbitMqOptions _opt;
-    private readonly IRabbitMqMessageHandler _handler;
+    private readonly IRabbitMqMessageConsumer _handler;
 
     private IChannel? _channel;
 
-    public RabbitMqConsumerHostedService(IRabbitMqMessageHandler handler, IConnection connection, IOptions<RabbitMqOptions> opt)
+    public RabbitMqConsumerHostedService(IRabbitMqMessageConsumer handler, IConnection connection, IOptions<RabbitMqOptions> opt)
     {
         _connection = connection;
         _opt = opt.Value;
