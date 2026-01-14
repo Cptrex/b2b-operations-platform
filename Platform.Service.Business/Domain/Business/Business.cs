@@ -2,27 +2,45 @@
 
 public class Business
 {
-    public int Id { get; set;  }
     public string BusinessId { get; set; }
     public string BusinessName { get; set; }
     public long CreatedAt { get; set; }
-    public List<User.User> Users { get; set; }
+
+    private List<User.User> _users = [];
+    public List<User.User> Users { get => _users; set => _users = value ?? []; }
+
+    private Business() 
+    {
+        BusinessId = string.Empty;
+        BusinessName = string.Empty;
+        _users = [];
+    }
 
     public Business(string businessId, string businessName)
     {
         BusinessId = businessId;
         BusinessName = businessName;
         CreatedAt = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        Users = [];
+        _users = [];
     }
 
     public void AddUser(User.User user)
     {
-        Users.Add(user);
+        if (user == null)
+        {
+            throw new ArgumentNullException(nameof(user));
+        }
+
+        _users.Add(user);
     }
 
     public void RemoveUser(User.User user)
     {
-        Users.Remove(user);
+        if (user == null)
+        {
+            throw new ArgumentNullException(nameof(user));
+        }
+
+        _users.Remove(user);
     }
 }

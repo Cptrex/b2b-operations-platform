@@ -28,6 +28,7 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<AuthorizationService>();
+builder.Services.AddScoped<AccountService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 
 builder.Services.AddSingleton<IPasswordService, PasswordService>();

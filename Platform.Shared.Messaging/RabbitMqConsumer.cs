@@ -3,6 +3,7 @@ using Platform.Service.Business.Infrastructure.Messaging;
 using Platform.Shared.Messaging.Contracts;
 using RabbitMQ.Client;
 using System.Text;
+using System.Text.Json;
 
 namespace Platform.Shared.Messaging;
 
@@ -17,7 +18,7 @@ public sealed class RabbitMqPublisher : IRabbitMqMessagePublisher
         _opt = opt.Value;
     }
 
-    public async Task PublishAsync(string routingKey, string body, CancellationToken ct = default)
+    public async Task PublishAsync<T>(string routingKey, T body, CancellationToken ct = default)
     {
         await using var channel = await _connection.CreateChannelAsync(cancellationToken: ct);
 
@@ -35,7 +36,8 @@ public sealed class RabbitMqPublisher : IRabbitMqMessagePublisher
             DeliveryMode = DeliveryModes.Persistent
         };
 
-        var bytes = Encoding.UTF8.GetBytes(body);
+        var json = body is string str ? str : JsonSerializer.Serialize(body);
+        var bytes = Encoding.UTF8.GetBytes(json);
 
         await channel.BasicPublishAsync(
             exchange: _opt.ExchangeName,

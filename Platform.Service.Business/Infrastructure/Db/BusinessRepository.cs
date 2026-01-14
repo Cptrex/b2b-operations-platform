@@ -1,31 +1,56 @@
-﻿using Platform.Service.Business.Domain.Business;
+﻿using Microsoft.EntityFrameworkCore;
+using Platform.Service.Business.Domain.Business;
 
 namespace Platform.Service.Business.Infrastructure.Db;
 
 public class BusinessRepository : IBusinessRepository
 {
-    public Task AddBusinessAsync(Domain.Business.Business business)
+    private readonly BusinessContext _context;
+
+    public BusinessRepository(BusinessContext context)
     {
-        throw new NotImplementedException();
+        _context = context;
     }
 
-    public Task<Domain.Business.Business> GetByBusinessKeyAsync(string businessKey)
+    public async Task<Domain.Business.Business?> GetByBusinessByIdAsync(string businessKey)
     {
-        throw new NotImplementedException();
+        return await _context.Businesses.Include(b => b.Users).FirstOrDefaultAsync(b => b.BusinessId == businessKey);
+    }
+
+    public async Task AddBusinessAsync(Domain.Business.Business business)
+    {
+        await _context.Businesses.AddAsync(business);
+    }
+
+    public async Task CreateBusinessAsync(Domain.Business.Business business)
+    {
+        await _context.Businesses.AddAsync(business);
+    }
+
+    public Task DeleteBusinessAsync(Domain.Business.Business business)
+    {
+        _context.Businesses.Remove(business);
+        return Task.CompletedTask;
     }
 
     public Task UpdateBusinessAsync(Domain.Business.Business business)
     {
-        throw new NotImplementedException();
+        _context.Businesses.Update(business);
+        return Task.CompletedTask;
     }
 
-    public Task DeleteBusinessByKeyAsync(string businessKey)
+    public async Task DeleteBusinessByKeyAsync(string businessKey)
     {
-        throw new NotImplementedException();
+        var business = await GetByBusinessByIdAsync(businessKey);
+
+        if (business != null)
+        {
+            _context.Businesses.Remove(business);
+        }
     }
 
-    public Task Save()
+    public async Task Save()
     {
-        throw new NotImplementedException();
+        await _context.SaveChangesAsync();
     }
 }

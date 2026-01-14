@@ -2,5 +2,5 @@
 
 public interface IRabbitMqMessagePublisher
 {
-    Task PublishAsync(string routingKey, string body, CancellationToken ct = default);
+    Task PublishAsync<T>(string routingKey, T body, CancellationToken ct = default);
 }

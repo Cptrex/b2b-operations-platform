@@ -8,8 +8,8 @@ namespace Platform.Service.Business.Api;
 [Route("api/v1/client/[controller]")]
 public class BusinessClientController : ControllerBase
 {
-    [HttpGet("{businessKey}")]
-    public IActionResult GetBusinessByKey(string businessKey)
+    [HttpGet("{businessId}")]
+    public IActionResult GetBusinessById(string businessId)
     {
         return Ok();
     }

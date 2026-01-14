@@ -25,9 +25,19 @@ public class AuthServiceTokenManager : IAuthServiceTokenManager
             _authPublicKey = File.ReadAllText(_authPublicKeyPath);
             Console.WriteLine($"Loaded Auth.Service public key from: {_authPublicKeyPath}");
         }
-        else 
+        else
         {
-            _authPublicKey = _cache.GetAsync(AuthRedisKeys.JwtClientPublicKeyV1).GetAwaiter().GetResult();
+            _authPublicKey = _cache.GetAsync(AuthRedisKeys.JwtServicePublicKeyV1).GetAwaiter().GetResult();
+
+            if (string.IsNullOrWhiteSpace(_authPublicKey))
+            {
+                Console.WriteLine($"Warning: Auth.Service public key not found at {_authPublicKeyPath}");
+            }
+            else
+            {
+                File.WriteAllText(_authPublicKeyPath, _authPublicKey);
+                Console.WriteLine($"Loaded Auth.Service public key from Redis and saved to: {_authPublicKeyPath}");
+            }
         }
     }
 

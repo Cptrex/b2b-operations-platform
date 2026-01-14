@@ -6,6 +6,7 @@ namespace Platform.Service.Business.Infrastructure.Db;
 public class BusinessContext : DbContext
 {
     public DbSet<Domain.Business.Business> Businesses { get; set; } = null!;
+    public DbSet<Domain.User.User> Users { get; set; } = null!;
     public DbSet<OutboxMessage> OutboxMessages { get; set; } = null!;
     public DbSet<InboxMessage> InboxMessages { get; set; } = null!;
 
@@ -21,14 +22,26 @@ public class BusinessContext : DbContext
         {
             entity.ToTable("businesses");
 
-            entity.HasKey(e => e.Id);
+            entity.HasKey(e => e.BusinessId);
 
-            entity.HasIndex(e => e.BusinessId).IsUnique();
-            entity.Property(e => e.BusinessName).IsRequired();
-            entity.Property(e => e.CreatedAt).IsRequired();
+            entity.Property(e => e.BusinessId)
+                .HasColumnName("business_id")
+                .HasMaxLength(36)
+                .IsRequired();
+
+            entity.Property(e => e.BusinessName)
+                .HasColumnName("business_name")
+                .HasMaxLength(256)
+                .IsRequired();
+
+            entity.Property(e => e.CreatedAt)
+                .HasColumnName("created_at")
+                .IsRequired();
+
             entity.HasMany(e => e.Users)
                   .WithOne(u => u.Business)
                   .HasForeignKey(u => u.BusinessId)
+                  .HasPrincipalKey(b => b.BusinessId)
                   .OnDelete(DeleteBehavior.Cascade);
         });
 
@@ -41,11 +54,19 @@ public class BusinessContext : DbContext
             entity.Property(e => e.AccountId)
                 .HasColumnName("account_id")
                 .IsRequired();
+
             entity.Property(e => e.UserName)
                 .HasColumnName("username")
+                .HasMaxLength(256)
                 .IsRequired();
+
             entity.Property(e => e.CreatedAt)
                 .HasColumnName("created_at")
+                .IsRequired();
+
+            entity.Property(e => e.BusinessId)
+                .HasColumnName("business_id")
+                .HasMaxLength(36)
                 .IsRequired();
         });
 

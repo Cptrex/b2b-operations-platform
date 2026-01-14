@@ -10,6 +10,7 @@ using Platform.Service.Business.Infrastructure.Http.Policies;
 using Platform.Service.Business.Infrastructure.Messaging;
 using Platform.Service.Business.Infrastructure.Security;
 using Platform.Service.Business.Infrastructure.Security.Background;
+using Platform.Shared.Cache.Extensions;
 using Platform.Shared.Messaging.Contracts;
 using Platform.Shared.Messaging.Extensions;
 using Polly;
@@ -130,6 +131,8 @@ builder.Services.AddTransient<PollyDelegatingHandler>();
 
 builder.Services.AddScoped<BusinessService>();
 builder.Services.AddScoped<IBusinessRepository, BusinessRepository>();
+
+builder.Services.AddRadisCacheProvider(builder.Configuration);
 
 builder.Services.AddRabbitMqConsumer(builder.Configuration);
 builder.Services.AddRabbitMqPublisher(builder.Configuration);
