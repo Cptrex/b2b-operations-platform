@@ -3,20 +3,22 @@ using Microsoft.IdentityModel.Tokens;
 using Platform.Service.Business.Application;
 using Platform.Service.Business.Application.Security;
 using Platform.Service.Business.Domain.Business;
-using Platform.Service.Business.Infrastructure.Background;
 using Platform.Service.Business.Infrastructure.Db;
 using Platform.Service.Business.Infrastructure.Http;
 using Platform.Service.Business.Infrastructure.Http.Clients;
 using Platform.Service.Business.Infrastructure.Http.Policies;
+using Platform.Service.Business.Infrastructure.Messaging;
 using Platform.Service.Business.Infrastructure.Security;
+using Platform.Service.Business.Infrastructure.Security.Background;
+using Platform.Shared.Messaging.Contracts;
+using Platform.Shared.Messaging.Extensions;
 using Polly;
 using System.Security.Cryptography;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<BusinessContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
+builder.Services.AddDbContext<BusinessContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
 
 builder.Services
     .AddAuthentication()
@@ -100,7 +102,7 @@ builder.Services.AddHttpClient<IAuthClient, AuthHttpClient>("AuthService", clien
 });
 builder.Services.AddHttpClient("InternalServices").AddHttpMessageHandler<PollyDelegatingHandler>();
 
-builder.Services.AddSingleton<IRsaKeyManager, RsaKeyManager>();
+builder.Services.AddSingleton<IAuthServiceTokenManager, AuthServiceTokenManager>();
 builder.Services.AddSingleton<IServiceTokenProvider, ServiceTokenProvider>();
 builder.Services.AddSingleton<IAsyncPolicy<HttpResponseMessage>>(PollyPolicies.BuildPolicy());
 
@@ -108,6 +110,9 @@ builder.Services.AddTransient<PollyDelegatingHandler>();
 
 builder.Services.AddScoped<BusinessService>();
 builder.Services.AddScoped<IBusinessRepository, BusinessRepository>();
+
+builder.Services.AddRabbitMq(builder.Configuration);
+builder.Services.AddSingleton<IRabbitMqMessageHandler, BusinessRabbitMqHandler>();
 
 builder.Services.AddHostedService<GetAuthTokenOnStartHosted>();
 

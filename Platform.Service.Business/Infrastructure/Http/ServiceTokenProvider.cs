@@ -21,7 +21,7 @@ public sealed class ServiceTokenProvider : IServiceTokenProvider
             return _token;
         }
 
-        var result = await _authClient.IssueServiceTokenAsync();
+        var result = await _authClient.GetServiceTokenAsync();
 
         _token = result.Token;
         _expiresAt = result.ExpiresAt;

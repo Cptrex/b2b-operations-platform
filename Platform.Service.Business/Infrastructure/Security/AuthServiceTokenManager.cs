@@ -1,15 +1,20 @@
 using Platform.Service.Business.Application.Security;
+using Platform.Shared.Cache.Contracts;
+using Platform.Shared.Cache.Keys.Redis;
 
 namespace Platform.Service.Business.Infrastructure.Security;
 
-public class RsaKeyManager : IRsaKeyManager
+public class AuthServiceTokenManager : IAuthServiceTokenManager
 {
     private readonly string _authPublicKeyPath;
+    private readonly ICacheProvider _cache;
     private string? _authPublicKey;
 
-    public RsaKeyManager(IConfiguration config)
+    public AuthServiceTokenManager(IConfiguration config, ICacheProvider cache)
     {
         _authPublicKeyPath = config["ServiceJwt:PublicKeyPath"] ?? "auth_business_public.pem";
+        _cache = cache;
+
         LoadAuthServicePublicKey();
     }
 
@@ -19,6 +24,10 @@ public class RsaKeyManager : IRsaKeyManager
         {
             _authPublicKey = File.ReadAllText(_authPublicKeyPath);
             Console.WriteLine($"Loaded Auth.Service public key from: {_authPublicKeyPath}");
+        }
+        else 
+        {
+            _authPublicKey = _cache.GetAsync(AuthRedisKeys.JwtClientPublicKeyV1).GetAwaiter().GetResult();
         }
     }
 

@@ -1,6 +1,6 @@
 ﻿namespace Platform.Service.Business.Application.Security;
 
-public interface IRsaKeyManager
+public interface IAuthServiceTokenManager
 {
     void SaveAuthServicePublicKey(string publicKey);
     string? GetAuthServicePublicKey();

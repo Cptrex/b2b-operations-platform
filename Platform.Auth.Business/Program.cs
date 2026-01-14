@@ -3,7 +3,11 @@ using Paltform.Auth.Shared.Cryptography;
 using Paltform.Auth.Shared.JwtToken.Extensions;
 using Platform.Auth.Business.Application;
 using Platform.Auth.Business.Domain.Account;
+using Platform.Auth.Business.Infrasturcture.Cache;
 using Platform.Auth.Business.Infrasturcture.Db;
+using Platform.Shared.Cache.Extensions;
+using Platform.Shared.Messaging.Contracts;
+using Platform.Shared.Messaging.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +18,7 @@ if ((!File.Exists(privateKeyPath) || !File.Exists(publicKeyPath)) && builder.Env
 {
     RsaKeyPairGenerator.GenerateToken(privateKeyPath, publicKeyPath);
 }
+
 builder.Services.AddDbContext<AuthBusinessContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
 
 builder.Services.AddAuthentication();
@@ -27,8 +32,15 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddSingleton<IPasswordService, PasswordService>();
 
 builder.Services.AddClientTokenIssuer(builder.Configuration, "ClientJwt");
+builder.Services.AddRadisCacheProvider(builder.Configuration);
+
+builder.Services.AddHostedService<UploadCacheJwtValidationPublicKeyHosted>();
+
+builder.Services.AddRabbitMq(builder.Configuration);
+builder.Services.AddSingleton<IRabbitMqMessageHandler, AuthBusinessRabbitMqMessageHandler>();
 
 var app = builder.Build();
+
 
 if (app.Environment.IsDevelopment())
 {

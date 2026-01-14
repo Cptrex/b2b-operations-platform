@@ -1,5 +1,6 @@
 using Paltform.Auth.Shared.Cryptography;
 using Paltform.Auth.Shared.JwtToken.Extensions;
+using Platform.Auth.Service.Services.Hosted;
 using Platform.Auth.Service.Services.ServiceToken;
 using Platform.Auth.Service.Services.ServiceToken.Contracts;
 
@@ -20,6 +21,8 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddSingleton<IServiceCredentialStore, ServiceTokenCredentialStore>();
 builder.Services.AddServiceTokenIssuer(builder.Configuration, "ServiceJwt");
+
+builder.Services.AddHostedService<UploadCacheJwtValidationPublicKeyHosted>();
 
 var app = builder.Build();
 

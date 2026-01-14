@@ -2,6 +2,6 @@
 
 public static class AuthRedisKeys
 {
-    public const string ClientPublicKey = "auth.business:public:key";
-    public const string ServicePublicKey = "auth.service:public:key";
+    public const string JwtClientPublicKeyV1 = "auth:keys:client:jwt-public:v1";
+    public const string JwtServicePublicKeyV1 = "auth:keys:service:jwt-public:v1";
 }

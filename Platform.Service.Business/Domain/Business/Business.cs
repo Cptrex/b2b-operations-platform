@@ -3,14 +3,14 @@
 public class Business
 {
     public int Id { get; set;  }
-    public string BusinessKey { get; set; }
+    public string BusinessId { get; set; }
     public string BusinessName { get; set; }
     public long CreatedAt { get; set; }
     public List<User.User> Users { get; set; }
 
-    internal Business(string businessKey, string businessName)
+    public Business(string businessId, string businessName)
     {
-        BusinessKey = businessKey;
+        BusinessId = businessId;
         BusinessName = businessName;
         CreatedAt = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         Users = [];

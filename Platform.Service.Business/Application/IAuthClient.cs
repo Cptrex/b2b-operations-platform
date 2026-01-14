@@ -4,5 +4,5 @@ namespace Platform.Service.Business.Application;
 
 public interface IAuthClient
 {
-    Task<ServiceTokenResult> IssueServiceTokenAsync();
+    Task<ServiceTokenResult> GetServiceTokenAsync();
 }

@@ -11,16 +11,16 @@ public class AuthHttpClient : IAuthClient
 {
     readonly HttpClient _httpClient;
     readonly IConfiguration _config;
-    readonly IRsaKeyManager _rsaKeyManager;
+    readonly IAuthServiceTokenManager _rsaKeyManager;
 
-    public AuthHttpClient(HttpClient httpClient, IConfiguration config, IRsaKeyManager rsaKeyManager)
+    public AuthHttpClient(HttpClient httpClient, IConfiguration config, IAuthServiceTokenManager rsaKeyManager)
     {
         _httpClient = httpClient;
         _config = config;
         _rsaKeyManager = rsaKeyManager;
     }
 
-    public async Task<ServiceTokenResult> IssueServiceTokenAsync()
+    public async Task<ServiceTokenResult> GetServiceTokenAsync()
     {
         var serviceId = _config["ServiceName"];
         var secret = _config["ServiceSecret"];
@@ -44,7 +44,12 @@ public class AuthHttpClient : IAuthClient
 
         response.EnsureSuccessStatusCode();
 
-        var dto = await response.Content.ReadFromJsonAsync<AuthTokenResponseDto>() ?? throw new InvalidOperationException("Empty auth response");
+        var dto = await response.Content.ReadFromJsonAsync<AuthTokenResponseDto>();
+
+        if (dto is null)
+        {
+            throw new InvalidOperationException("dto is empty");
+        }
 
         _rsaKeyManager.SaveAuthServicePublicKey(dto.PublicKey);
 

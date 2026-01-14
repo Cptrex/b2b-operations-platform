@@ -1,7 +1,6 @@
-﻿
-using Platform.Service.Business.Application.Security;
+﻿using Platform.Service.Business.Application.Security;
 
-namespace Platform.Service.Business.Infrastructure.Background;
+namespace Platform.Service.Business.Infrastructure.Security.Background;
 
 public class GetAuthTokenOnStartHosted : IHostedService
 {
@@ -16,7 +15,7 @@ public class GetAuthTokenOnStartHosted : IHostedService
     {
         var result = await _serviceTokenProvider.GetTokenAsync();
 
-        if (string.IsNullOrEmpty(result) == false)
+        if (string.IsNullOrWhiteSpace(result) == false)
         {
             Console.WriteLine($"Authorized for http service-to-service messaging: {result}");
         }
