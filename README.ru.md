@@ -1,12 +1,13 @@
-# B2B Operations Platform
+﻿# B2B Operations Platform
 
-Microservices platform for B2B operations management built on .NET 10.
+Микросервисная платформа для управления B2B-операциями, построенная на .NET 10.
 
-[Русская версия](README.ru.md)
+[English version](README.md)
+
 
 ---
 
-## 💻 Technology Stack
+## 💻 Технологический стек
 
 ### Backend
 - **.NET 10** (C# 14.0)
@@ -73,50 +74,50 @@ curl http://localhost:8080/health
 
 ---
 
-## 🚀 Startup Order
+## 🚀 Порядок запуска
 
-### Option 1: Docker Compose
+### Вариант 1: Docker Compose
 
 ```bash
-# Clone the repository
+# Клонируйте репозиторий
 git clone https://github.com/Cptrex/b2b-operations-platform.git
 cd b2b-operations-platform
 
-# Start all services
+# Запустите все сервисы
 docker-compose up -d
 
-# Check status
+# Проверьте статус
 docker-compose ps
 ```
 
-### Option 2: Visual Studio
+### Вариант 2: Visual Studio
 
-**Project startup order:**
+**Порядок запуска проектов:**
 
-1. **First, start all Auth.* services:**
+1. **Сначала запустите все Auth.* сервисы:**
    - `Platform.Auth.Service`
    - `Platform.Auth.Business`
 
-2. **Then start other services one by one:**
+2. **Затем запустите остальные сервисы один за одним:**
    - `Platform.Service.Business`
    - `Platform.Service.Orders`
    - `Platform.Service.Notify`
    - `Platform.Service.Search`
    - `Platform.Service.Analytics`
 
-**Steps:**
+**Шаги:**
 
-1. Open `B2BOperationsPlatform.sln` in Visual Studio
-2. Right-click on Solution → Properties
-3. Select "Configure Startup Projects" → "Multiple startup projects"
-4. Set Action to "Start" for required projects in specified order
-5. Press F5 to launch
+1. Откройте `B2BOperationsPlatform.sln` в Visual Studio
+2. Щелкните правой кнопкой мыши на Solution → Properties
+3. Выберите "Configure Startup Projects" → "Multiple startup projects"
+4. Установите Action в "Start" для нужных проектов в указанном порядке
+5. Нажмите F5 для запуска
 
-**Or start manually:**
+**Или запускайте вручную:**
 
-1. Start `Platform.Auth.Service` (F5 or Ctrl+F5)
-2. Start `Platform.Auth.Business` (F5 or Ctrl+F5)
-3. Wait for Auth services initialization
-4. Start other services sequentially
+1. Запустите `Platform.Auth.Service` (F5 или Ctrl+F5)
+2. Запустите `Platform.Auth.Business` (F5 или Ctrl+F5)
+3. Дождитесь инициализации Auth сервисов
+4. Запустите остальные сервисы поочередно
 
 ---
