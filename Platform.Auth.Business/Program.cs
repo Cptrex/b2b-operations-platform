@@ -37,6 +37,7 @@ builder.Services.AddClientTokenIssuer(builder.Configuration, "ClientJwt");
 builder.Services.AddRadisCacheProvider(builder.Configuration);
 
 builder.Services.AddHostedService<UploadCacheJwtValidationPublicKeyHosted>();
+builder.Services.AddHostedService<OutboxPublisherBackgroundService>();
 
 builder.Services.AddRabbitMqConsumer(builder.Configuration);
 builder.Services.AddRabbitMqPublisher(builder.Configuration);

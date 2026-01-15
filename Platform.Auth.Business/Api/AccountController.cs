@@ -18,14 +18,7 @@ public class AccountController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateAccount(CreateAccountDto dto, CancellationToken cancellationToken)
     {
-        var result = await _accountService.CreateAccountAsync(
-            dto.BusinessId,
-            dto.Login,
-            dto.Name,
-            dto.Email,
-            dto.Password,
-            cancellationToken
-        );
+        var result = await _accountService.CreateAccountAsync(dto.BusinessId, dto.Login, dto.Name, dto.Email, dto.Password, cancellationToken);
 
         if (!result.IsSuccess)
         {
@@ -36,10 +29,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpDelete("{accountId}")]
-    public async Task<IActionResult> DeleteAccount(
-        int accountId,
-        [FromQuery] string businessId,
-        CancellationToken cancellationToken)
+    public async Task<IActionResult> DeleteAccount(int accountId, [FromQuery] string businessId, CancellationToken cancellationToken)
     {
         var result = await _accountService.DeleteAccountAsync(accountId, businessId, cancellationToken);
 

@@ -1,22 +1,21 @@
 ﻿using Platform.Service.Business.Domain.Business;
 using Platform.Service.Business.Domain.User;
 using Platform.Service.Business.Infrastructure.Db;
-using Platform.Shared.Messaging.Contracts;
+using Platform.Service.Business.Infrastructure.Db.Entity;
 using Platform.Shared.Messaging.Contracts.Events.Business;
 using Platform.Shared.Messaging.Contracts.Events.User;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace Platform.Service.Business.Application;
 
 public class BusinessService
 {
-    private readonly IRabbitMqMessagePublisher _eventPublisher;
     private readonly IBusinessRepository _businessRepository;
     private readonly BusinessContext _context;
 
-    public BusinessService(IRabbitMqMessagePublisher eventPublisher, IBusinessRepository businessRepository, BusinessContext context)
+    public BusinessService(IBusinessRepository businessRepository, BusinessContext context)
     {
-        _eventPublisher = eventPublisher;
         _businessRepository = businessRepository;
         _context = context;
     }
@@ -43,7 +42,6 @@ public class BusinessService
         var newBusiness = new Domain.Business.Business(businessId, businessName);
 
         await _businessRepository.CreateBusinessAsync(newBusiness);
-        await _businessRepository.Save();
 
         var businessCreatedEvent = new BusinessCreatedEvent
         {
@@ -54,7 +52,16 @@ public class BusinessService
             CreatedAt = DateTimeOffset.FromUnixTimeSeconds(newBusiness.CreatedAt)
         };
 
-        await _eventPublisher.PublishAsync("service.business.businessCreated", businessCreatedEvent, ct);
+        await _context.OutboxMessages.AddAsync(new OutboxMessage
+        {
+            EventId = businessCreatedEvent.EventId,
+            Type = nameof(BusinessCreatedEvent),
+            RoutingKey = "business.businessCreated",
+            Payload = JsonSerializer.Serialize(businessCreatedEvent),
+            OccurredAt = businessCreatedEvent.OccuredAt
+        }, ct);
+
+        await _businessRepository.Save();
 
         return newBusiness;
     }
@@ -74,7 +81,6 @@ public class BusinessService
         }
 
         await _businessRepository.DeleteBusinessAsync(business);
-        await _businessRepository.Save();
 
         var businessDeletedEvent = new BusinessDeletedEvent
         {
@@ -83,7 +89,16 @@ public class BusinessService
             BusinessId = businessId
         };
 
-        await _eventPublisher.PublishAsync("service.business.businessDeleted", businessDeletedEvent, ct);
+        await _context.OutboxMessages.AddAsync(new OutboxMessage
+        {
+            EventId = businessDeletedEvent.EventId,
+            Type = nameof(BusinessDeletedEvent),
+            RoutingKey = "business.businessDeleted",
+            Payload = JsonSerializer.Serialize(businessDeletedEvent),
+            OccurredAt = businessDeletedEvent.OccuredAt
+        }, ct);
+
+        await _businessRepository.Save();
     }
 
     public async Task<User> CreateBusinessUserAsync(string username, Guid accountId, string businessId, CancellationToken ct)
@@ -115,7 +130,6 @@ public class BusinessService
         business.AddUser(newUser);
 
         await _businessRepository.UpdateBusinessAsync(business);
-        await _businessRepository.Save();
 
         var userCreatedEvent = new UserCreatedEvent
         {
@@ -127,7 +141,16 @@ public class BusinessService
             CreatedAt = DateTimeOffset.FromUnixTimeSeconds(newUser.CreatedAt)
         };
 
-        await _eventPublisher.PublishAsync("business.user.created", userCreatedEvent, ct);
+        await _context.OutboxMessages.AddAsync(new OutboxMessage
+        {
+            EventId = userCreatedEvent.EventId,
+            Type = nameof(UserCreatedEvent),
+            RoutingKey = "auth.service.userCreated",
+            Payload = JsonSerializer.Serialize(userCreatedEvent),
+            OccurredAt = userCreatedEvent.OccuredAt
+        }, ct);
+
+        await _businessRepository.Save();
 
         return newUser;
     }
@@ -160,8 +183,6 @@ public class BusinessService
 
         business.RemoveUser(user);
 
-        await _businessRepository.Save();
-
         var userDeletedEvent = new UserDeletedEvent
         {
             EventId = Guid.NewGuid(),
@@ -169,6 +190,15 @@ public class BusinessService
             UserId = userId
         };
 
-        await _eventPublisher.PublishAsync("service.business.userDeleted", userDeletedEvent, ct);
+        await _context.OutboxMessages.AddAsync(new OutboxMessage
+        {
+            EventId = userDeletedEvent.EventId,
+            Type = nameof(UserDeletedEvent),
+            RoutingKey = "auth.service.userDeleted",
+            Payload = JsonSerializer.Serialize(userDeletedEvent),
+            OccurredAt = userDeletedEvent.OccuredAt
+        }, ct);
+
+        await _businessRepository.Save();
     }
 }

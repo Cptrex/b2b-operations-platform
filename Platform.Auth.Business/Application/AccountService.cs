@@ -1,9 +1,11 @@
 using Platform.Auth.Business.Domain.Account;
 using Platform.Auth.Business.Domain.Account.ValueObjects;
-using Platform.Shared.Messaging.Contracts;
+using Platform.Auth.Business.Infrasturcture.Db;
+using Platform.Auth.Business.Infrasturcture.Db.Entity;
 using Platform.Shared.Messaging.Contracts.Events.Account;
 using Platform.Shared.Results;
 using Platform.Shared.Results.Enums;
+using System.Text.Json;
 
 namespace Platform.Auth.Business.Application;
 
@@ -11,16 +13,13 @@ public class AccountService
 {
     private readonly IAccountRepository _accountRepository;
     private readonly IPasswordService _passwordService;
-    private readonly IRabbitMqMessagePublisher _eventPublisher;
+    private readonly AuthBusinessContext _context;
 
-    public AccountService(
-        IAccountRepository accountRepository,
-        IPasswordService passwordService,
-        IRabbitMqMessagePublisher eventPublisher)
+    public AccountService(IAccountRepository accountRepository, IPasswordService passwordService, AuthBusinessContext context)
     {
         _accountRepository = accountRepository;
         _passwordService = passwordService;
-        _eventPublisher = eventPublisher;
+        _context = context;
     }
 
     public async Task<Result<Account>> CreateAccountAsync(string businessId, string login, string name, string email, string password, CancellationToken cancellationToken)
@@ -61,14 +60,7 @@ public class AccountService
         var passwordHash = _passwordService.Hash(password);
         var passwordValueObject = PasswordHash.Create(passwordHash);
 
-        var newAccount = new Account(
-            0,
-            businessId,
-            login,
-            name,
-            emailValueObject,
-            passwordValueObject
-        );
+        var newAccount = new Account(businessId, login, name, emailValueObject, passwordValueObject);
 
         var createdAccount = await _accountRepository.CreateAsync(newAccount, cancellationToken);
 
@@ -89,7 +81,16 @@ public class AccountService
             CreatedAt = DateTimeOffset.UtcNow
         };
 
-        await _eventPublisher.PublishAsync("auth.business.accountCreated", accountCreatedEvent, cancellationToken);
+        await _context.OutboxMessages.AddAsync(new OutboxMessage
+        {
+            EventId = accountCreatedEvent.EventId,
+            Type = nameof(AccountCreatedEvent),
+            RoutingKey = "auth.business.accountCreated",
+            Payload = JsonSerializer.Serialize(accountCreatedEvent),
+            OccurredAt = accountCreatedEvent.OccuredAt
+        }, cancellationToken);
+
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result<Account>.Ok(createdAccount);
     }
@@ -123,7 +124,16 @@ public class AccountService
             BusinessId = businessId
         };
 
-        await _eventPublisher.PublishAsync("auth.business.accountDeleted", accountDeletedEvent, cancellationToken);
+        await _context.OutboxMessages.AddAsync(new OutboxMessage
+        {
+            EventId = accountDeletedEvent.EventId,
+            Type = nameof(AccountDeletedEvent),
+            RoutingKey = "auth.business.accountDeleted",
+            Payload = JsonSerializer.Serialize(accountDeletedEvent),
+            OccurredAt = accountDeletedEvent.OccuredAt
+        }, cancellationToken);
+
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Ok();
     }

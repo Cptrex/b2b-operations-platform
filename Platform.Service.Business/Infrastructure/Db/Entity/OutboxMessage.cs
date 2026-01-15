@@ -5,6 +5,7 @@ public class OutboxMessage
     public int Id { get; set; }
     public Guid EventId { get; set; }
     public string Type { get; set; } = string.Empty;
+    public string RoutingKey { get; set; } = string.Empty;
     public string Payload { get; set; } = string.Empty;
     public DateTimeOffset OccurredAt { get; set; }
     public DateTimeOffset? PublishedAt { get; set; }

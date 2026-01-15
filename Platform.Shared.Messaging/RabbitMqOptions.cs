@@ -8,6 +8,7 @@ public class RabbitMqOptions
     public string Password { get; set; } = "guest";
     public string VirtualHost { get; set; } = "/";
 
+    public string Exchange { get; set; } = "platform.events";
     public string ExchangeName { get; set; } = "platform.events";
     public string QueueName { get; set; } = "orders-service.events";
 

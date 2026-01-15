@@ -31,11 +31,7 @@ public class TokenController : ControllerBase
         var token = _issuer.ServiceIssue(request.ServiceId);
         var publicKey = _issuer.GetPublicKey();
 
-        return Ok(new AuthResponseDto(
-            token.Token,
-            token.ExpiresAt,
-            publicKey
-        ));
+        return Ok(new AuthResponseDto(token.Token, token.ExpiresAt, publicKey));
     }
 
     [HttpGet("health-check")]

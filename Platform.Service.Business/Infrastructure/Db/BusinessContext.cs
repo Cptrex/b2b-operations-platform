@@ -88,6 +88,10 @@ public class BusinessContext : DbContext
                 .HasColumnName("type")
                 .HasMaxLength(200)
                 .IsRequired();
+            entity.Property(e => e.RoutingKey)
+                .HasColumnName("routing_key")
+                .HasMaxLength(200)
+                .IsRequired();
             entity.Property(e => e.Payload)
                 .HasColumnName("payload")
                 .IsRequired();

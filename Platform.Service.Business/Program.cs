@@ -139,6 +139,7 @@ builder.Services.AddRabbitMqPublisher(builder.Configuration);
 builder.Services.AddSingleton<IRabbitMqMessageConsumer, BusinessRabbitMqConsumer>();
 
 builder.Services.AddHostedService<GetAuthTokenOnStartHosted>();
+builder.Services.AddHostedService<OutboxPublisherBackgroundService>();
 
 builder.Services.AddLogging();
 builder.Services.AddControllers();

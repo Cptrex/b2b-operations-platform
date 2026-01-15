@@ -42,7 +42,7 @@ public sealed class RabbitMqPublisher : IRabbitMqMessagePublisher
         await channel.BasicPublishAsync(
             exchange: _opt.ExchangeName,
             routingKey: routingKey,
-            mandatory: false,
+            mandatory: true,
             basicProperties: props,
             body: bytes,
             cancellationToken: ct);

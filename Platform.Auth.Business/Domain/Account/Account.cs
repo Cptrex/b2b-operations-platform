@@ -11,17 +11,17 @@ public class Account
     public Email Email { get; private set; }
     public PasswordHash Password { get; private set; }
 
-    private Account() { }
-
-    public Account(
-        int id,
-        string businessId,
-        string login,
-        string name,
-        Email email,
-        PasswordHash password)
+    private Account() 
     {
-        Id = id;
+        BusinessId = string.Empty;
+        Login = string.Empty;
+        Name = string.Empty;
+        Email = null!;
+        Password = null!;
+    }
+
+    public Account(string businessId, string login, string name, Email email, PasswordHash password)
+    {
         BusinessId = businessId;
         Login = login;
         Name = name;

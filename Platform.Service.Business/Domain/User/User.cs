@@ -10,6 +10,13 @@ public class User
     public string BusinessId { get; set; }
     public Business.Business Business { get; set; }
 
+    private User()
+    {
+        UserName = string.Empty;
+        BusinessId = string.Empty;
+        Business = null!;
+    }
+
     public User(string username, Guid accountId, string businessId)
     {
         UserName = username;
@@ -17,5 +24,6 @@ public class User
         BusinessId = businessId;
 
         CreatedAt = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        Business = null!;
     }
 }
