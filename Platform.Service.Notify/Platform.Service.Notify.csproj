@@ -8,13 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.2" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Paltform.Shared.Logging\Platform.Logging.MongoDb.csproj" />
     <ProjectReference Include="..\Platform.Shared.Cache.Keys\Platform.Shared.Cache.Keys.csproj" />
     <ProjectReference Include="..\Platform.Shared.Cache\Platform.Shared.Cache.csproj" />
+    <ProjectReference Include="..\Platform.Shared.Messaging\Platform.Shared.Messaging.csproj" />
     <ProjectReference Include="..\Platform.Shared.Results\Platform.Shared.Results.csproj" />
   </ItemGroup>
 

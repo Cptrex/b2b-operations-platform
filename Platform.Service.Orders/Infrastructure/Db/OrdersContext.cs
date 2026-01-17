@@ -154,10 +154,24 @@ public class OrdersContext : DbContext
                 .HasColumnName("payload")
                 .IsRequired();
 
-            entity.Property(e => e.OccurredAt)
-                .HasColumnName("occurred_at")
-                .IsRequired();
-        });
+                entity.Property(e => e.OccurredAt)
+                    .HasColumnName("occurred_at")
+                    .IsRequired();
+
+                entity.Property(e => e.PublishedAt)
+                    .HasColumnName("published_at");
+
+                entity.Property(e => e.RetryCount)
+                    .HasColumnName("retry_count")
+                    .HasDefaultValue(0)
+                    .IsRequired();
+
+                entity.Property(e => e.LastError)
+                    .HasColumnName("last_error")
+                    .HasMaxLength(2000);
+
+                entity.HasIndex(e => new { e.PublishedAt, e.OccurredAt });
+            });
 
         modelBuilder.Entity<InboxMessage>(entity =>
         {

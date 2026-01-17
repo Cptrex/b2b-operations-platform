@@ -48,6 +48,14 @@ public class BusinessRabbitMqConsumer : IRabbitMqMessageConsumer
             return;
         }
 
+        var existingInboxMessage = await _businessContext.InboxMessages
+            .FirstOrDefaultAsync(m => m.EventId == eventData.EventId && m.Consumer == "AccountCreated", ct);
+
+        if (existingInboxMessage != null)
+        {
+            return;
+        }
+
         await _businessContext.InboxMessages.AddAsync(new()
         {
             EventId = eventData.EventId,
@@ -63,6 +71,14 @@ public class BusinessRabbitMqConsumer : IRabbitMqMessageConsumer
         var eventData = JsonSerializer.Deserialize<AccountDeletedEvent>(json);
 
         if (eventData == null)
+        {
+            return;
+        }
+
+        var existingInboxMessage = await _businessContext.InboxMessages
+            .FirstOrDefaultAsync(m => m.EventId == eventData.EventId && m.Consumer == "AccountDeleted", ct);
+
+        if (existingInboxMessage != null)
         {
             return;
         }

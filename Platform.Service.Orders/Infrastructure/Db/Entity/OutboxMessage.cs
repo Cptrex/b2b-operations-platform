@@ -8,6 +8,9 @@ public class OutboxMessage
     public string RoutingKey { get; set; }
     public string Payload { get; set; }
     public DateTimeOffset OccurredAt { get; set; }
+    public DateTimeOffset? PublishedAt { get; set; }
+    public int RetryCount { get; set; }
+    public string? LastError { get; set; }
 
     public OutboxMessage()
     {

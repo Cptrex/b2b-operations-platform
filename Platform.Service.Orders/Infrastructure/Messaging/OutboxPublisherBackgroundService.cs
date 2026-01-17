@@ -44,7 +44,8 @@ public class OutboxPublisherBackgroundService : BackgroundService
         var context = scope.ServiceProvider.GetRequiredService<OrdersContext>();
 
         var messages = await context.OutboxMessages
-            .OrderBy(m => m.Id)
+            .Where(m => m.PublishedAt == null && m.RetryCount < 5)
+            .OrderBy(m => m.OccurredAt)
             .Take(10)
             .ToListAsync(ct);
 
@@ -54,11 +55,18 @@ public class OutboxPublisherBackgroundService : BackgroundService
             {
                 await _publisher.PublishAsync(message.RoutingKey, message.Payload, ct);
 
-                context.OutboxMessages.Remove(message);
+                message.PublishedAt = DateTimeOffset.UtcNow;
+                message.LastError = null;
+
                 await context.SaveChangesAsync(ct);
             }
             catch (Exception ex)
             {
+                message.RetryCount++;
+                message.LastError = ex.Message;
+
+                await context.SaveChangesAsync(ct);
+
                 Console.WriteLine($"Failed to publish message {message.EventId}: {ex.Message}");
             }
         }
