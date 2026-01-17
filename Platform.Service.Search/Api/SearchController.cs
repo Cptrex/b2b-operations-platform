@@ -4,7 +4,7 @@ using Platform.Service.Search.Application;
 namespace Platform.Service.Search.Api;
 
 [ApiController]
-[Route("api/search")]
+[Route("api/v1/search")]
 public class SearchController : ControllerBase
 {
     private readonly SearchService _searchService;
@@ -12,6 +12,12 @@ public class SearchController : ControllerBase
     public SearchController(SearchService searchService)
     {
         _searchService = searchService;
+    }
+
+    [HttpGet("health-check")]
+    public IActionResult HealthCheck()
+    {
+        return Ok("Search Service is running");
     }
 
     [HttpGet("business")]

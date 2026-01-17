@@ -49,27 +49,27 @@ curl http://localhost:8080/api/v1/auth/health-check
 
 ### Service.Business
 ```bash
-curl http://localhost:8080/health
+curl http://localhost:8080/api/v1/business/health-check
 ```
 
 ### Service.Orders
 ```bash
-curl http://localhost:8080/health
+curl http://localhost:8080/api/v1/orders/health-check
 ```
 
 ### Service.Notify
 ```bash
-curl http://localhost:8080/health
+curl http://localhost:8080/api/v1/notify/health-check
 ```
 
 ### Service.Search
 ```bash
-curl http://localhost:8080/health
+curl http://localhost:8080/api/v1/search/health-check
 ```
 
 ### Service.Analytics
 ```bash
-curl http://localhost:8080/health
+curl http://localhost:8080/api/v1/analytics/health-check
 ```
 
 ---

@@ -17,25 +17,19 @@ public class BusinessInternalController : ControllerBase
         _businessService = businessService;
     }
 
-    [HttpPost]
-    public async Task<IActionResult> CreateBusiness(CreateBusinessDto dto, CancellationToken ct)
-    {
-        var business = await _businessService.CreateBusinessAsync(dto.BusinessId, dto.BusinessName, ct);
-            
-        return Ok(new { BusinessId = business.BusinessId, BusinessName = business.BusinessName });
-    }
+        [HttpPost]
+        public async Task<IActionResult> CreateBusiness(CreateBusinessDto dto, CancellationToken ct)
+        {
+            var business = await _businessService.CreateBusinessAsync(dto.BusinessId, dto.BusinessName, ct);
 
-    [HttpDelete("{businessId}")]
-    public async Task<IActionResult> DeleteBusiness(string businessId, CancellationToken ct)
-    {
-        await _businessService.DeleteBusinessAsync(businessId, ct);
+            return Ok(new { BusinessId = business.BusinessId, BusinessName = business.BusinessName });
+        }
 
-        return NoContent();
-    }
+        [HttpDelete("{businessId}")]
+        public async Task<IActionResult> DeleteBusiness(string businessId, CancellationToken ct)
+        {
+            await _businessService.DeleteBusinessAsync(businessId, ct);
 
-    [HttpGet("health-check")]
-    public IActionResult HealhCheck()
-    {
-        return Ok("Business Service is running");
+            return NoContent();
+        }
     }
-}

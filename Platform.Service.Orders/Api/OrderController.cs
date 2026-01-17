@@ -96,13 +96,7 @@ public class OrderController : ControllerBase
         {
             OrderId = order.OrderId,
             DeliveryStatus = order.DeliveryStatus.ToString(),
-            Status = order.Status.ToString()
-        });
-    }
-
-    [HttpGet("health-check")]
-    public IActionResult HealthCheck()
-    {
-        return Ok("Orders Service is running");
-    }
-}
+                        Status = order.Status.ToString()
+                    });
+                }
+            }
