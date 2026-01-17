@@ -1,29 +1,25 @@
-# См. статью по ссылке https://aka.ms/customizecontainer, чтобы узнать как настроить контейнер отладки и как Visual Studio использует этот Dockerfile для создания образов для ускорения отладки.
-
-# Этот этап используется при запуске из VS в быстром режиме (по умолчанию для конфигурации отладки)
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
-USER $APP_UID
-WORKDIR /app
-EXPOSE 8080
-
-
-# Этот этап используется для сборки проекта службы
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+
 COPY ["Platform.Service.Business/Platform.Service.Business.csproj", "Platform.Service.Business/"]
-RUN dotnet restore "./Platform.Service.Business/Platform.Service.Business.csproj"
+COPY ["Platform.Shared.Cache/Platform.Shared.Cache.csproj", "Platform.Shared.Cache/"]
+COPY ["Platform.Shared.Cache.Keys/Platform.Shared.Cache.Keys.csproj", "Platform.Shared.Cache.Keys/"]
+COPY ["Platform.Shared.Results/Platform.Shared.Results.csproj", "Platform.Shared.Results/"]
+COPY ["Platform.Shared.Messaging/Platform.Shared.Messaging.csproj", "Platform.Shared.Messaging/"]
+
+RUN dotnet restore "Platform.Service.Business/Platform.Service.Business.csproj"
 COPY . .
 WORKDIR "/src/Platform.Service.Business"
-RUN dotnet build "./Platform.Service.Business.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "Platform.Service.Business.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet publish "Platform.Service.Business.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-# Этот этап используется для публикации проекта службы, который будет скопирован на последний этап
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Platform.Service.Business.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
-
-# Этот этап используется в рабочей среде или при запуске из VS в обычном режиме (по умолчанию, когда конфигурация отладки не используется)
-FROM base AS final
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
-COPY --from=publish /app/publish .
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+COPY --from=build /app/publish .
+RUN chown -R appuser:appuser /app
+USER appuser
+EXPOSE 8080
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 CMD curl -f http://localhost:8080/health || exit 1
 ENTRYPOINT ["dotnet", "Platform.Service.Business.dll"]

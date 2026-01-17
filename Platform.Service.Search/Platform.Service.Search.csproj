@@ -25,4 +25,14 @@
     <ProjectReference Include="..\Platform.Shared.Messaging\Platform.Shared.Messaging.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Исключить служебные папки из отображения в Solution Explorer -->
+    <None Remove="bin\**" />
+    <None Remove="obj\**" />
+    <Compile Remove="bin\**" />
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="bin\**" />
+    <EmbeddedResource Remove="obj\**" />
+  </ItemGroup>
+
 </Project>
