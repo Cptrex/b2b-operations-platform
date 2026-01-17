@@ -3,6 +3,8 @@ using Microsoft.IdentityModel.Tokens;
 using Platform.Service.Business.Application;
 using Platform.Service.Business.Application.Security;
 using Platform.Service.Business.Domain.Business;
+using Platform.Service.Business.Domain.Product;
+using Platform.Service.Business.Domain.Customer;
 using Platform.Service.Business.Infrastructure.Db;
 using Platform.Service.Business.Infrastructure.Http;
 using Platform.Service.Business.Infrastructure.Http.Clients;
@@ -131,6 +133,8 @@ builder.Services.AddTransient<PollyDelegatingHandler>();
 
 builder.Services.AddScoped<BusinessService>();
 builder.Services.AddScoped<IBusinessRepository, BusinessRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 
 builder.Services.AddRadisCacheProvider(builder.Configuration);
 

@@ -2,8 +2,8 @@
 using Platform.Service.Business.Application;
 using Platform.Service.Business.Infrastructure.Db;
 using Platform.Shared.Messaging.Contracts;
-using Platform.Shared.Messaging.Contracts.Events.User;
 using Platform.Shared.Messaging.Contracts.Events.Account;
+using Platform.Shared.Messaging.Contracts.Events.Orders;
 using System.Collections.Concurrent;
 using System.Text.Json;
 
@@ -24,7 +24,8 @@ public class BusinessRabbitMqConsumer : IRabbitMqMessageConsumer
         _routingKeyHandlers = new()
         {
             ["auth.business.accountCreated"] = HandleAccountCreated,
-            ["auth.business.accountDeleted"] = HandleAccountDeleted
+            ["auth.business.accountDeleted"] = HandleAccountDeleted,
+            ["orders.customerAddedToBusiness"] = HandleCustomerAddedToBusiness
         };
     }
 
@@ -88,6 +89,41 @@ public class BusinessRabbitMqConsumer : IRabbitMqMessageConsumer
             EventId = eventData.EventId,
             ProcessedAt = DateTime.UtcNow,
             Consumer = "AccountDeleted"
+        }, ct);
+
+        await _businessContext.SaveChangesAsync(ct);
+    }
+
+    private async Task HandleCustomerAddedToBusiness(string json, CancellationToken ct)
+    {
+        var eventData = JsonSerializer.Deserialize<CustomerAddedToBusinessEvent>(json);
+
+        if (eventData == null)
+        {
+            return;
+        }
+
+        var existingInboxMessage = await _businessContext.InboxMessages
+            .FirstOrDefaultAsync(m => m.EventId == eventData.EventId && m.Consumer == "CustomerAddedToBusiness", ct);
+
+        if (existingInboxMessage != null)
+        {
+            return;
+        }
+
+        await _businessService.AddCustomerAsync(
+            eventData.CustomerId,
+            eventData.BusinessId,
+            eventData.CustomerName,
+            eventData.CustomerEmail,
+            eventData.CustomerPhone,
+            ct);
+
+        await _businessContext.InboxMessages.AddAsync(new()
+        {
+            EventId = eventData.EventId,
+            ProcessedAt = DateTime.UtcNow,
+            Consumer = "CustomerAddedToBusiness"
         }, ct);
 
         await _businessContext.SaveChangesAsync(ct);

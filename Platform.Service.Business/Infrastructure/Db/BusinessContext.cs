@@ -1,4 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Platform.Service.Business.Domain.Customer;
+using Platform.Service.Business.Domain.Product;
+using Platform.Service.Business.Domain.User;
 using Platform.Service.Business.Infrastructure.Db.Entity;
 
 namespace Platform.Service.Business.Infrastructure.Db;
@@ -6,7 +9,9 @@ namespace Platform.Service.Business.Infrastructure.Db;
 public class BusinessContext : DbContext
 {
     public DbSet<Domain.Business.Business> Businesses { get; set; } = null!;
-    public DbSet<Domain.User.User> Users { get; set; } = null!;
+    public DbSet<User> Users { get; set; } = null!;
+    public DbSet<Product> Products { get; set; } = null!;
+    public DbSet<Customer> Customers { get; set; } = null!;
     public DbSet<OutboxMessage> OutboxMessages { get; set; } = null!;
     public DbSet<InboxMessage> InboxMessages { get; set; } = null!;
 
@@ -43,9 +48,21 @@ public class BusinessContext : DbContext
                   .HasForeignKey(u => u.BusinessId)
                   .HasPrincipalKey(b => b.BusinessId)
                   .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasMany(e => e.Products)
+                  .WithOne(p => p.Business)
+                  .HasForeignKey(p => p.BusinessId)
+                  .HasPrincipalKey(b => b.BusinessId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasMany(e => e.Customers)
+                  .WithOne(c => c.Business)
+                  .HasForeignKey(c => c.BusinessId)
+                  .HasPrincipalKey(b => b.BusinessId)
+                  .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<Domain.User.User>(entity =>
+        modelBuilder.Entity<User>(entity =>
         {
             entity.ToTable("users");
 
@@ -67,6 +84,83 @@ public class BusinessContext : DbContext
             entity.Property(e => e.BusinessId)
                 .HasColumnName("business_id")
                 .HasMaxLength(36)
+                .IsRequired();
+        });
+
+        modelBuilder.Entity<Product>(entity =>
+        {
+            entity.ToTable("products");
+
+            entity.HasKey(e => e.ProductId);
+
+            entity.Property(e => e.ProductId)
+                .HasColumnName("product_id")
+                .IsRequired();
+
+            entity.Property(e => e.BusinessId)
+                .HasColumnName("business_id")
+                .HasMaxLength(36)
+                .IsRequired();
+
+            entity.Property(e => e.ProductName)
+                .HasColumnName("product_name")
+                .HasMaxLength(256)
+                .IsRequired();
+
+            entity.Property(e => e.Description)
+                .HasColumnName("description")
+                .HasMaxLength(2000)
+                .IsRequired();
+
+            entity.Property(e => e.Price)
+                .HasColumnName("price")
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.IsAvailable)
+                .HasColumnName("is_available")
+                .IsRequired();
+
+            entity.Property(e => e.CreatedAt)
+                .HasColumnName("created_at")
+                .IsRequired();
+
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnName("updated_at");
+        });
+
+        modelBuilder.Entity<Customer>(entity =>
+        {
+            entity.ToTable("customers");
+
+            entity.HasKey(e => new { e.CustomerId, e.BusinessId });
+
+            entity.Property(e => e.CustomerId)
+                .HasColumnName("customer_id")
+                .IsRequired();
+
+            entity.Property(e => e.BusinessId)
+                .HasColumnName("business_id")
+                .HasMaxLength(36)
+                .IsRequired();
+
+            entity.Property(e => e.CustomerName)
+                .HasColumnName("customer_name")
+                .HasMaxLength(256)
+                .IsRequired();
+
+            entity.Property(e => e.CustomerEmail)
+                .HasColumnName("customer_email")
+                .HasMaxLength(256)
+                .IsRequired();
+
+            entity.Property(e => e.CustomerPhone)
+                .HasColumnName("customer_phone")
+                .HasMaxLength(50)
+                .IsRequired();
+
+            entity.Property(e => e.CreatedAt)
+                .HasColumnName("created_at")
                 .IsRequired();
         });
 
