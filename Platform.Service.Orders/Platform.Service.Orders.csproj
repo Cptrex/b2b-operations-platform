@@ -20,6 +20,7 @@
     <ProjectReference Include="..\Platform.Shared.Cache.Keys\Platform.Shared.Cache.Keys.csproj" />
     <ProjectReference Include="..\Platform.Shared.Cache\Platform.Shared.Cache.csproj" />
     <ProjectReference Include="..\Platform.Shared.Results\Platform.Shared.Results.csproj" />
+    <ProjectReference Include="..\Platform.Shared.Messaging\Platform.Shared.Messaging.csproj" />
   </ItemGroup>
 
 </Project>
