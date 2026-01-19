@@ -3,6 +3,8 @@ using Paltform.Auth.Shared.JwtToken.Extensions;
 using Platform.Auth.Service.Services.Hosted;
 using Platform.Auth.Service.Services.ServiceToken;
 using Platform.Auth.Service.Services.ServiceToken.Contracts;
+using Platform.Identity.Http;
+using Platform.Logging.MongoDb.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,10 @@ builder.Services.AddSingleton<IServiceCredentialStore, ServiceTokenCredentialSto
 builder.Services.AddServiceTokenIssuer(builder.Configuration, "ServiceJwt");
 
 builder.Services.AddHostedService<UploadCacheJwtValidationPublicKeyHosted>();
+
+builder.Services.AddIdentityHttpActor();
+
+builder.Services.AddMongoDbLogging(builder.Configuration);
 
 var app = builder.Build();
 

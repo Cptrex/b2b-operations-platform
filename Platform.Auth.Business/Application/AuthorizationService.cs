@@ -1,5 +1,8 @@
 ﻿using Paltform.Auth.Shared.JwtToken.Contracts;
 using Platform.Auth.Business.Domain.Account;
+using Platform.Auth.Business.Infrasturcture.Logging;
+using Platform.Logging.MongoDb;
+using Platform.Logging.MongoDb.Contracts;
 using Platform.Shared.Results;
 using Platform.Shared.Results.Enums;
 
@@ -10,12 +13,14 @@ public class AuthorizationService
     readonly IAccountRepository _accountRepository;
     readonly IClientTokenIssuer _tokenIssuer;
     readonly IPasswordService _passwordService;
+    readonly ILoggingService _logging;
 
-    public AuthorizationService(IAccountRepository accountRepository, IClientTokenIssuer issuer, IPasswordService passwordService)
+    public AuthorizationService(IAccountRepository accountRepository, IClientTokenIssuer issuer, IPasswordService passwordService, ILoggingService logging)
     {
         _accountRepository = accountRepository;
         _tokenIssuer = issuer;
         _passwordService = passwordService;
+        _logging = logging;
     }
 
     public async Task<Result<IssuedTokens>> Authorize(string login, string password, string businessId, CancellationToken cancellationToken)
@@ -43,6 +48,8 @@ public class AuthorizationService
         }
 
         var issuedAccessToken = IssueUserToken(foundAccount);
+
+        await _logging.WriteAsync(LogType.Security, LoggingAction.IssueTokens, issuedAccessToken, cancellationToken);
 
         return Result<IssuedTokens>.Ok(issuedAccessToken);
     }

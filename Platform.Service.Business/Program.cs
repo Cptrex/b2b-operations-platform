@@ -18,6 +18,8 @@ using Platform.Shared.Messaging.Extensions;
 using Polly;
 using System.Security.Cryptography;
 using System.Text;
+using Platform.Identity.Http;
+using Platform.Logging.MongoDb.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -144,6 +146,9 @@ builder.Services.AddSingleton<IRabbitMqMessageConsumer, BusinessRabbitMqConsumer
 
 builder.Services.AddHostedService<GetAuthTokenOnStartHosted>();
 builder.Services.AddHostedService<OutboxPublisherBackgroundService>();
+
+builder.Services.AddIdentityHttpActor();
+builder.Services.AddMongoDbLogging(builder.Configuration);
 
 builder.Services.AddLogging();
 builder.Services.AddControllers();

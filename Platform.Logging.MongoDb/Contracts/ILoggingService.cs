@@ -2,5 +2,5 @@
 
 public interface ILoggingService
 {
-    Task WriteAsync<Tpayload>(string action, string source, Tpayload? payload, CancellationToken ct = default);
+    Task WriteAsync<Tpayload>(LogType type, string action, Tpayload? payload, CancellationToken ct = default);
 }

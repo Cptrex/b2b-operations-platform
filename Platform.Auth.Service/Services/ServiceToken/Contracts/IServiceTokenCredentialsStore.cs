@@ -1,6 +1,8 @@
-﻿namespace Platform.Auth.Service.Services.ServiceToken.Contracts;
+﻿using Platform.Shared.Results;
+
+namespace Platform.Auth.Service.Services.ServiceToken.Contracts;
 
 public interface IServiceCredentialStore
 {
-    Task<bool> ValidateAsync(string serviceId, string secret);
+    Task<Result> ValidateAsync(string serviceId, string secret);
 }

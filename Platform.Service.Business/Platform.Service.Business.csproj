@@ -21,10 +21,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Platform.Identity.Http\Platform.Identity.Http.csproj" />
+    <ProjectReference Include="..\Platform.Logging.MongoDb\Platform.Logging.MongoDb.csproj" />
     <ProjectReference Include="..\Platform.Shared.Cache.Keys\Platform.Shared.Cache.Keys.csproj" />
     <ProjectReference Include="..\Platform.Shared.Cache\Platform.Shared.Cache.csproj" />
     <ProjectReference Include="..\Platform.Shared.Messaging\Platform.Shared.Messaging.csproj" />
     <ProjectReference Include="..\Platform.Shared.Results\Platform.Shared.Results.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Infrastructure\NewFolder1\" />
   </ItemGroup>
 
 </Project>

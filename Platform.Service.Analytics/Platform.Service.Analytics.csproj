@@ -14,6 +14,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Paltform.Shared.Logging\Platform.Logging.MongoDb.csproj" />
+    <ProjectReference Include="..\Platform.Identity.Http\Platform.Identity.Http.csproj" />
+    <ProjectReference Include="..\Platform.Logging.MongoDb\Platform.Logging.MongoDb.csproj" />
     <ProjectReference Include="..\Platform.Shared.Cache.Keys\Platform.Shared.Cache.Keys.csproj" />
     <ProjectReference Include="..\Platform.Shared.Cache\Platform.Shared.Cache.csproj" />
     <ProjectReference Include="..\Platform.Shared.Messaging\Platform.Shared.Messaging.csproj" />

@@ -1,4 +1,6 @@
 ﻿using Platform.Auth.Service.Services.ServiceToken.Contracts;
+using Platform.Shared.Results;
+using Platform.Shared.Results.Enums;
 
 namespace Platform.Auth.Service.Services.ServiceToken;
 
@@ -22,13 +24,18 @@ public class ServiceTokenCredentialStore : IServiceCredentialStore
         }
     }
 
-    public Task<bool> ValidateAsync(string serviceId, string secret)
+    public Task<Result> ValidateAsync(string serviceId, string secret)
     {
         if (string.IsNullOrWhiteSpace(serviceId) || !_services.TryGetValue(serviceId, out var storedSecret))
         {
-            return Task.FromResult(false);
+            return Task.FromResult(Result.Fail(new Error("Service Id cant be empty or not found", ResultErrorCategory.NotFound)));
         }
 
-        return Task.FromResult(storedSecret == secret);
+        if (storedSecret != secret)
+        {
+            return Task.FromResult(Result.Fail(new Error("Service not authorized for getting auth", ResultErrorCategory.Validation)));
+        }
+
+        return Task.FromResult(Result.Ok());
     }
 }

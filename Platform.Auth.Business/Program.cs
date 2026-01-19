@@ -6,9 +6,11 @@ using Platform.Auth.Business.Domain.Account;
 using Platform.Auth.Business.Infrasturcture.Cache;
 using Platform.Auth.Business.Infrasturcture.Db;
 using Platform.Auth.Business.Infrasturcture.Messaging;
+using Platform.Logging.MongoDb.Extensions;
 using Platform.Shared.Cache.Extensions;
 using Platform.Shared.Messaging.Contracts;
 using Platform.Shared.Messaging.Extensions;
+using Platform.Identity.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,8 +43,11 @@ builder.Services.AddHostedService<OutboxPublisherBackgroundService>();
 
 builder.Services.AddRabbitMqConsumer(builder.Configuration);
 builder.Services.AddRabbitMqPublisher(builder.Configuration);
-
 builder.Services.AddSingleton<IRabbitMqMessageConsumer, AuthBusinessRabbitMqMessageConsumer>();
+
+builder.Services.AddIdentityHttpActor();
+
+builder.Services.AddMongoDbLogging(builder.Configuration);
 
 var app = builder.Build();
 

@@ -2,6 +2,9 @@ using Platform.Auth.Business.Domain.Account;
 using Platform.Auth.Business.Domain.Account.ValueObjects;
 using Platform.Auth.Business.Infrasturcture.Db;
 using Platform.Auth.Business.Infrasturcture.Db.Entity;
+using Platform.Auth.Business.Infrasturcture.Logging;
+using Platform.Logging.MongoDb;
+using Platform.Logging.MongoDb.Contracts;
 using Platform.Shared.Messaging.Contracts.Events.Account;
 using Platform.Shared.Results;
 using Platform.Shared.Results.Enums;
@@ -14,12 +17,14 @@ public class AccountService
     private readonly IAccountRepository _accountRepository;
     private readonly IPasswordService _passwordService;
     private readonly AuthBusinessContext _context;
+    private readonly ILoggingService _loggingService;
 
-    public AccountService(IAccountRepository accountRepository, IPasswordService passwordService, AuthBusinessContext context)
+    public AccountService(IAccountRepository accountRepository, IPasswordService passwordService, AuthBusinessContext context, ILoggingService loggingService)
     {
         _accountRepository = accountRepository;
         _passwordService = passwordService;
         _context = context;
+        _loggingService = loggingService;
     }
 
     public async Task<Result<Account>> CreateAccountAsync(string businessId, string login, string name, string email, string password, CancellationToken cancellationToken)
@@ -92,6 +97,8 @@ public class AccountService
 
         await _context.SaveChangesAsync(cancellationToken);
 
+        await _loggingService.WriteAsync(LogType.Activitty, LoggingAction.CreateAccount, accountCreatedEvent, cancellationToken);
+
         return Result<Account>.Ok(createdAccount);
     }
 
@@ -135,6 +142,8 @@ public class AccountService
 
         await _context.SaveChangesAsync(cancellationToken);
 
+        await _loggingService.WriteAsync(LogType.Activitty, LoggingAction.DeleteAccount, accountDeletedEvent, cancellationToken);
+
         return Result.Ok();
     }
 
@@ -146,7 +155,9 @@ public class AccountService
         }
 
         var accounts = await _accountRepository.GetAllByBusinessIdAsync(businessId, cancellationToken);
-        
+
+        await _loggingService.WriteAsync(LogType.Activitty, LoggingAction.GetAllBusinessAccount, businessId, cancellationToken);
+
         return Result<List<Account>>.Ok(accounts);
     }
 }
