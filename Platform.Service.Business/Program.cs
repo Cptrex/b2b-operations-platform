@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Platform.Service.Business.Application;
-using Platform.Service.Business.Application.Security;
+using Platform.Shared.Abstractions.Contracts.Auth;
 using Platform.Service.Business.Domain.Business;
 using Platform.Service.Business.Domain.Product;
 using Platform.Service.Business.Domain.Customer;
@@ -17,7 +17,6 @@ using Platform.Shared.Messaging.Contracts;
 using Platform.Shared.Messaging.Extensions;
 using Polly;
 using System.Security.Cryptography;
-using System.Text;
 using Platform.Identity.Http;
 using Platform.Logging.MongoDb.Extensions;
 

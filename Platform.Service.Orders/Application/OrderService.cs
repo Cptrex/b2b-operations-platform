@@ -2,8 +2,13 @@ using Platform.Service.Orders.Domain.Order;
 using Platform.Service.Orders.Infrastructure.Db;
 using Platform.Service.Orders.Infrastructure.Db.Entity;
 using Platform.Shared.Messaging.Contracts.Events.Orders;
-using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using Platform.Service.Orders.Api.Dto;
+using Platform.Shared.Results;
+using Platform.Shared.Results.Enums;
+using Platform.Logging.MongoDb.Contracts;
+using Platform.Logging.MongoDb;
+using Platform.Service.Orders.Infrastructure.Logging;
 
 namespace Platform.Service.Orders.Application;
 
@@ -11,14 +16,16 @@ public class OrderService
 {
     private readonly IOrderRepository _orderRepository;
     private readonly OrdersContext _context;
+    private readonly ILoggingService _logging;
 
-    public OrderService(IOrderRepository orderRepository, OrdersContext context)
+    public OrderService(IOrderRepository orderRepository, OrdersContext context, ILoggingService logging)
     {
         _orderRepository = orderRepository;
         _context = context;
+        _logging = logging;
     }
 
-    public async Task<Order> CreateOrderAsync(string businessId, Guid customerId, string customerName, string customerEmail, string customerPhone, List<OrderItemDto> items, CancellationToken ct)
+    public async Task<Result<Order>> CreateOrderAsync(string businessId, Guid customerId, string customerName, string customerEmail, string customerPhone, List<CreateOrderItemDto> items, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(businessId))
         {
@@ -40,7 +47,7 @@ public class OrderService
             throw new ArgumentNullException(nameof(customerEmail));
         }
 
-        if (items == null || items.Count == 0)
+        if (items is null || items.Count == 0)
         {
             throw new ArgumentException("Order must contain at least one item", nameof(items));
         }
@@ -50,6 +57,7 @@ public class OrderService
         foreach (var itemDto in items)
         {
             var orderItem = new OrderItem(itemDto.ProductId, itemDto.ProductName, itemDto.Price, itemDto.Quantity);
+
             order.AddItem(orderItem);
         }
 
@@ -100,10 +108,13 @@ public class OrderService
 
         await _orderRepository.Save();
 
-        return order;
+        await _logging.WriteAsync(LogType.Activitty, LoggingAction.CreateOrder, orderCreatedEvent, ct);
+        await _logging.WriteAsync(LogType.Activitty, LoggingAction.CreateCustomer, customerAddedEvent, ct);
+
+        return Result<Order>.Ok(order);
     }
 
-    public async Task<Order> ConfirmOrderAsync(Guid orderId, CancellationToken ct)
+    public async Task<Result<Order>> ConfirmOrderAsync(Guid orderId, CancellationToken ct)
     {
         if (orderId == Guid.Empty)
         {
@@ -112,9 +123,9 @@ public class OrderService
 
         var order = await _orderRepository.GetOrderByIdAsync(orderId);
 
-        if (order == null)
+        if (order is null)
         {
-            throw new InvalidOperationException($"Order with id '{orderId}' not found");
+            return Result<Order>.Fail(new Error($"Order with id '{orderId}' not found", ResultErrorCategory.NotFound));
         }
 
         order.Confirm();
@@ -140,10 +151,12 @@ public class OrderService
 
         await _orderRepository.Save();
 
-        return order;
+        await _logging.WriteAsync(LogType.Activitty, LoggingAction.ConfirmOrder, orderConfirmedEvent, ct);
+
+        return Result<Order>.Ok(order);
     }
 
-    public async Task<Order> CancelOrderAsync(Guid orderId, CancellationToken ct)
+    public async Task<Result<Order>> CancelOrderAsync(Guid orderId, CancellationToken ct)
     {
         if (orderId == Guid.Empty)
         {
@@ -152,9 +165,9 @@ public class OrderService
 
         var order = await _orderRepository.GetOrderByIdAsync(orderId);
 
-        if (order == null)
+        if (order is null)
         {
-            throw new InvalidOperationException($"Order with id '{orderId}' not found");
+            return Result<Order>.Fail(new Error($"Order with id '{orderId}' not found", ResultErrorCategory.NotFound));
         }
 
         order.Cancel();
@@ -180,10 +193,12 @@ public class OrderService
 
         await _orderRepository.Save();
 
-        return order;
+        await _logging.WriteAsync(LogType.Activitty, LoggingAction.CancelOrder, orderCancelledEvent, ct);
+
+        return Result<Order>.Ok(order);
     }
 
-    public async Task<Order> UpdatePaymentStatusAsync(Guid orderId, PaymentStatus newStatus, CancellationToken ct)
+    public async Task<Result<Order>> UpdatePaymentStatusAsync(Guid orderId, PaymentStatus newStatus, CancellationToken ct)
     {
         if (orderId == Guid.Empty)
         {
@@ -192,9 +207,9 @@ public class OrderService
 
         var order = await _orderRepository.GetOrderByIdAsync(orderId);
 
-        if (order == null)
+        if (order is null)
         {
-            throw new InvalidOperationException($"Order with id '{orderId}' not found");
+            return Result<Order>.Fail(new Error($"Order with id '{orderId}' not found", ResultErrorCategory.NotFound));
         }
 
         order.UpdatePaymentStatus(newStatus);
@@ -220,10 +235,12 @@ public class OrderService
 
         await _orderRepository.Save();
 
-        return order;
+        await _logging.WriteAsync(LogType.Activitty, LoggingAction.PaymentStatus, paymentStatusUpdatedEvent, ct);
+
+        return Result<Order>.Ok(order);
     }
 
-    public async Task<Order> UpdateDeliveryStatusAsync(Guid orderId, DeliveryStatus newStatus, CancellationToken ct)
+    public async Task<Result<Order>> UpdateDeliveryStatusAsync(Guid orderId, DeliveryStatus newStatus, CancellationToken ct)
     {
         if (orderId == Guid.Empty)
         {
@@ -232,9 +249,9 @@ public class OrderService
 
         var order = await _orderRepository.GetOrderByIdAsync(orderId);
 
-        if (order == null)
+        if (order is null)
         {
-            throw new InvalidOperationException($"Order with id '{orderId}' not found");
+            return Result<Order>.Fail(new Error($"Order with id '{orderId}' not found", ResultErrorCategory.NotFound));
         }
 
         order.UpdateDeliveryStatus(newStatus);
@@ -260,19 +277,8 @@ public class OrderService
 
         await _orderRepository.Save();
 
-        return order;
-    }
-}
+        await _logging.WriteAsync(LogType.Activitty, LoggingAction.UpdateDeliveryStatus, deliveryStatusUpdatedEvent, ct);
 
-public class OrderItemDto
-{
-    public Guid ProductId { get; set; }
-    public string ProductName { get; set; }
-    public decimal Price { get; set; }
-    public int Quantity { get; set; }
-
-    public OrderItemDto()
-    {
-        ProductName = string.Empty;
+        return Result<Order>.Ok(order);
     }
 }

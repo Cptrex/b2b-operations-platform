@@ -2,8 +2,8 @@
 
 public interface IBusinessRepository
 {
-    Task<Business?> GetByBusinessByIdAsync(string businessKey);
-    Task DeleteBusinessByKeyAsync(string businessKey);
+    Task<Business?> GetByBusinessByIdAsync(string businessId);
+    Task DeleteBusinessByIdAsync(string businessId);
     Task AddBusinessAsync(Business business);
     Task CreateBusinessAsync(Business business);
     Task DeleteBusinessAsync(Business business);

@@ -16,10 +16,13 @@ public class BusinessRabbitMqConsumer : IRabbitMqMessageConsumer
     private readonly BusinessContext _businessContext;
     private readonly BusinessService _businessService;
 
-    public BusinessRabbitMqConsumer(BusinessContext businessContext, BusinessService businessService)
+    private readonly UserService _userService;
+
+    public BusinessRabbitMqConsumer(BusinessContext businessContext, BusinessService businessService, UserService userService)
     {
         _businessContext = businessContext;
         _businessService = businessService;
+        _userService = userService;
 
         _routingKeyHandlers = new()
         {
@@ -97,7 +100,7 @@ public class BusinessRabbitMqConsumer : IRabbitMqMessageConsumer
 
         if (userToDelete != null)
         {
-            await _businessService.DeleteUserAsync(userToDelete.Id, eventData.BusinessId, ct);
+            await _userService.DeleteUserAsync(userToDelete.Id, eventData.BusinessId, ct);
         }
 
         await _businessContext.InboxMessages.AddAsync(new()

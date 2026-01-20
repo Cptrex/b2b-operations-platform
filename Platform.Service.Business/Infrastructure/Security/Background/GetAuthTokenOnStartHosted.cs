@@ -1,4 +1,4 @@
-﻿using Platform.Service.Business.Application.Security;
+﻿using Platform.Shared.Abstractions.Contracts.Auth;
 
 namespace Platform.Service.Business.Infrastructure.Security.Background;
 

@@ -1,4 +1,4 @@
-﻿namespace Platform.Service.Business.Application.Security;
+﻿namespace Platform.Shared.Abstractions.Contracts.Auth;
 
 public interface IAuthServiceTokenManager
 {

@@ -10,6 +10,7 @@
   <Project Path="Platform.Service.Notify/Platform.Service.Notify.csproj" />
   <Project Path="Platform.Service.Orders/Platform.Service.Orders.csproj" />
   <Project Path="Platform.Service.Search/Platform.Service.Search.csproj" />
+  <Project Path="Platform.Shared.Abstractions/Platform.Shared.Abstractions.csproj" Id="eb276565-2bbc-48f8-a074-3d8582c68d66" />
   <Project Path="Platform.Shared.Cache.Keys/Platform.Shared.Cache.Keys.csproj" Id="cabde105-6b49-40c0-811d-933412a4571f" />
   <Project Path="Platform.Shared.Cache/Platform.Shared.Cache.csproj" Id="94464aab-e3fe-4464-aed5-763ba9511bff" />
   <Project Path="Platform.Shared.Messaging/Platform.Shared.Messaging.csproj" Id="23da715e-681f-4741-8bca-f60052107864" />

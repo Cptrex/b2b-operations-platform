@@ -1,9 +1,7 @@
-﻿using Platform.Service.Business.Application;
-using Platform.Service.Business.Application.Security.Dto;
-using Platform.Service.Business.Infrastructure.Http.Dtos;
+﻿using Platform.Service.Business.Infrastructure.Http.Dtos;
+using Platform.Shared.Abstractions.Contracts.Auth;
 using System.Text;
 using System.Text.Json;
-using Platform.Service.Business.Application.Security;
 
 namespace Platform.Service.Business.Infrastructure.Http.Clients;
 

@@ -1,4 +1,4 @@
-using Platform.Service.Business.Application.Security;
+using Platform.Shared.Abstractions.Contracts.Auth;
 using Platform.Shared.Cache.Contracts;
 using Platform.Shared.Cache.Keys.Redis;
 

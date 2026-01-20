@@ -10,30 +10,31 @@ namespace Platform.Service.Business.Api;
 [Route("api/v1/internal/[controller]")]
 public class UserController : ControllerBase
 {
-    private readonly BusinessService _businessService;
+    private readonly UserService _uerService;
 
-    public UserController(BusinessService businessService)
+    public UserController(UserService uerService)
     {
-        _businessService = businessService;
+        _uerService = uerService;
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateUser(CreateUserDto dto, CancellationToken ct)
     {
-        var user = await _businessService.CreateBusinessUserAsync(
-            dto.Login,
-            Guid.NewGuid(),
-            dto.BusinessId,
-            ct
-        );
+        var result = await _uerService.CreateBusinessUserAsync(dto.Login, Guid.NewGuid(), dto.BusinessId, ct);
 
-        return Ok(new { UserId = user.Id, UserName = user.UserName, BusinessId = user.BusinessId });
+        if (result.IsSuccess == false)
+        {
+            return BadRequest(result.Error!.Message);
+        }
+
+        return Ok(result);
     }
 
     [HttpDelete("{userId}")]
     public async Task<IActionResult> DeleteUser(int userId, [FromQuery] string businessId, CancellationToken ct)
     {
-        await _businessService.DeleteUserAsync(userId, businessId, ct);
+        await _uerService.DeleteUserAsync(userId, businessId, ct);
+
         return NoContent();
     }
 }

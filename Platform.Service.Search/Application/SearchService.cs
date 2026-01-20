@@ -1,6 +1,9 @@
+using Platform.Logging.MongoDb;
+using Platform.Logging.MongoDb.Contracts;
+using Platform.Service.Search.Domain.Account;
 using Platform.Service.Search.Domain.Business;
 using Platform.Service.Search.Domain.User;
-using Platform.Service.Search.Domain.Account;
+using Platform.Service.Search.Infrastructure.Logging;
 
 namespace Platform.Service.Search.Application;
 
@@ -9,12 +12,14 @@ public class SearchService
     private readonly IBusinessRepository _businessRepository;
     private readonly IUserRepository _userRepository;
     private readonly IAccountRepository _accountRepository;
+    private readonly ILoggingService _logging;
 
-    public SearchService(IBusinessRepository businessRepository, IUserRepository userRepository, IAccountRepository accountRepository)
+    public SearchService(IBusinessRepository businessRepository, IUserRepository userRepository, IAccountRepository accountRepository, ILoggingService logging)
     {
         _businessRepository = businessRepository;
         _userRepository = userRepository;
         _accountRepository = accountRepository;
+        _logging = logging;
     }
 
     public async Task<List<Domain.Business.Business>> SearchBusinessByNameAsync(string businessName, CancellationToken ct)
@@ -23,6 +28,8 @@ public class SearchService
         {
             throw new ArgumentException("Business name cannot be empty", nameof(businessName));
         }
+
+        await _logging.WriteAsync(LogType.Activitty, LoggingAction.SearchBusinessByName, businessName, ct);
 
         return await _businessRepository.SearchByNameAsync(businessName, ct);
     }
@@ -34,6 +41,8 @@ public class SearchService
             throw new ArgumentException("User name cannot be empty", nameof(userName));
         }
 
+        await _logging.WriteAsync(LogType.Activitty, LoggingAction.SearchUserByName, userName, ct);
+
         return await _userRepository.SearchByUserNameAsync(userName, ct);
     }
 
@@ -43,6 +52,8 @@ public class SearchService
         {
             throw new ArgumentException("Login cannot be empty", nameof(login));
         }
+
+        await _logging.WriteAsync(LogType.Activitty, LoggingAction.SearchAccountByLogin, login, ct);
 
         return await _accountRepository.SearchByLoginAsync(login, ct);
     }
@@ -54,6 +65,8 @@ public class SearchService
             throw new ArgumentException("Email cannot be empty", nameof(email));
         }
 
+        await _logging.WriteAsync(LogType.Activitty, LoggingAction.SearchAccountByEmail, email, ct);
+
         return await _accountRepository.SearchByEmailAsync(email, ct);
     }
 
@@ -63,6 +76,8 @@ public class SearchService
         {
             throw new ArgumentException("Name cannot be empty", nameof(name));
         }
+
+        await _logging.WriteAsync(LogType.Activitty, LoggingAction.SearchAccountByName, name, ct);
 
         return await _accountRepository.SearchByNameAsync(name, ct);
     }

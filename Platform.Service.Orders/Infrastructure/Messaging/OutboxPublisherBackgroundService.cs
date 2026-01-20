@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Platform.Service.Orders.Infrastructure.Db;
-using Platform.Service.Orders.Infrastructure.Db.Entity;
 using Platform.Shared.Messaging.Contracts;
 using System.Text.Json;
 

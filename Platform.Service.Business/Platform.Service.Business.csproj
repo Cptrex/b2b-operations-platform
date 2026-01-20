@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Infrastructure\NewFolder1\**" />
+    <Content Remove="Infrastructure\NewFolder1\**" />
+    <EmbeddedResource Remove="Infrastructure\NewFolder1\**" />
+    <None Remove="Infrastructure\NewFolder1\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.2" />
@@ -23,14 +30,11 @@
   <ItemGroup>
     <ProjectReference Include="..\Platform.Identity.Http\Platform.Identity.Http.csproj" />
     <ProjectReference Include="..\Platform.Logging.MongoDb\Platform.Logging.MongoDb.csproj" />
+    <ProjectReference Include="..\Platform.Shared.Abstractions\Platform.Shared.Abstractions.csproj" />
     <ProjectReference Include="..\Platform.Shared.Cache.Keys\Platform.Shared.Cache.Keys.csproj" />
     <ProjectReference Include="..\Platform.Shared.Cache\Platform.Shared.Cache.csproj" />
     <ProjectReference Include="..\Platform.Shared.Messaging\Platform.Shared.Messaging.csproj" />
     <ProjectReference Include="..\Platform.Shared.Results\Platform.Shared.Results.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Infrastructure\NewFolder1\" />
   </ItemGroup>
 
 </Project>

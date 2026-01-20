@@ -10,34 +10,30 @@ namespace Platform.Service.Business.Api;
 [Route("api/v1/internal/business/{businessId}/products")]
 public class ProductController : ControllerBase
 {
-    private readonly BusinessService _businessService;
+    private readonly ProductService _productService;
 
-    public ProductController(BusinessService businessService)
+    public ProductController(ProductService productService)
     {
-        _businessService = businessService;
+        _productService = productService;
     }
 
     [HttpPost]
     public async Task<IActionResult> AddProduct(string businessId, AddProductDto dto, CancellationToken ct)
     {
-        var product = await _businessService.AddProductToCatalogAsync(businessId, dto.ProductName, dto.Description, dto.Price, ct);
+        var result = await _productService.AddProductToCatalogAsync(businessId, dto.ProductName, dto.Description, dto.Price, ct);
 
-        return Ok(new
+        if (result.IsSuccess == false)
         {
-            ProductId = product.ProductId,
-            BusinessId = product.BusinessId,
-            ProductName = product.ProductName,
-            Description = product.Description,
-            Price = product.Price,
-            IsAvailable = product.IsAvailable,
-            CreatedAt = product.CreatedAt
-        });
+            return BadRequest(result.Error!.Message);
+        }
+
+        return Ok(result);
     }
 
     [HttpDelete("{productId}")]
     public async Task<IActionResult> RemoveProduct(string businessId, Guid productId, CancellationToken ct)
     {
-        var product = await _businessService.RemoveProductFromCatalogAsync(productId, ct);
+        await _productService.RemoveProductFromCatalogAsync(productId, ct);
 
         return NoContent();
     }
@@ -45,29 +41,26 @@ public class ProductController : ControllerBase
     [HttpPut("{productId}")]
     public async Task<IActionResult> UpdateProduct(string businessId, Guid productId, UpdateProductDto dto, CancellationToken ct)
     {
-        var product = await _businessService.UpdateProductInfoAsync(productId, dto.ProductName, dto.Description, dto.Price, ct);
+        var result = await _productService.UpdateProductInfoAsync(productId, dto.ProductName, dto.Description, dto.Price, ct);
 
-        return Ok(new
+        if (result.IsSuccess == false) 
         {
-            ProductId = product.ProductId,
-            BusinessId = product.BusinessId,
-            ProductName = product.ProductName,
-            Description = product.Description,
-            Price = product.Price,
-            UpdatedAt = product.UpdatedAt
-        });
+            return BadRequest(result.Error!.Message);
+        }
+
+        return Ok(result);
     }
 
     [HttpPatch("{productId}/availability")]
     public async Task<IActionResult> SetProductAvailability(string businessId, Guid productId, SetProductAvailabilityDto dto, CancellationToken ct)
     {
-        var product = await _businessService.SetProductAvailabilityAsync(productId, dto.IsAvailable, ct);
+        var result = await _productService.SetProductAvailabilityAsync(productId, dto.IsAvailable, ct);
 
-        return Ok(new
+        if (result.IsSuccess == false) 
         {
-            ProductId = product.ProductId,
-            BusinessId = product.BusinessId,
-            IsAvailable = product.IsAvailable
-        });
+            return BadRequest(result);
+        }
+
+        return Ok(result);
     }
 }

@@ -39,7 +39,7 @@ public class BusinessRepository : IBusinessRepository
         return Task.CompletedTask;
     }
 
-    public async Task DeleteBusinessByKeyAsync(string businessKey)
+    public async Task DeleteBusinessByIdAsync(string businessKey)
     {
         var business = await GetByBusinessByIdAsync(businessKey);
 
