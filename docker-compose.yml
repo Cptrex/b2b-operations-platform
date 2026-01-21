@@ -1,0 +1,167 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - b2b-net
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: svc
+      RABBITMQ_DEFAULT_PASS: STRONG_PASSWORD
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - b2b-net
+
+  redis:
+    image: redis:7
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - b2b-net
+
+  mongo:
+    image: mongo:6
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: STRONG_PASSWORD
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+      - ./docker/mongo/init.js:/docker-entrypoint-initdb.d/init.js:ro
+    networks:
+      - b2b-net
+
+  auth.service:
+    build:
+      context: .
+      dockerfile: Platform.Auth.Service/Dockerfile
+    env_file:
+      - Platform.Auth.Service/.env
+    ports:
+      - "5257:8080"
+    depends_on:
+      - postgres
+      - rabbitmq
+      - mongo
+      - redis
+    networks:
+      - b2b-net
+
+  auth.business:
+    build:
+      context: .
+      dockerfile: Platform.Auth.Business/Dockerfile
+    env_file:
+      - Platform.Auth.Business/.env
+    ports:
+      - "8081:8080"
+    depends_on:
+      - postgres
+      - rabbitmq
+      - mongo
+    networks:
+      - b2b-net
+
+  service.business:
+    build:
+      context: .
+      dockerfile: Platform.Service.Business/Dockerfile
+    env_file:
+      - Platform.Service.Business/.env
+    ports:
+      - "8082:8080"
+    depends_on:
+      - postgres
+      - rabbitmq
+      - mongo
+      - redis
+    networks:
+      - b2b-net
+
+  service.orders:
+    build:
+      context: .
+      dockerfile: Platform.Service.Orders/Dockerfile
+    env_file:
+      - Platform.Service.Orders/.env
+    ports:
+      - "8083:8080"
+    depends_on:
+      - postgres
+      - rabbitmq
+      - mongo
+    networks:
+      - b2b-net
+
+  service.notify:
+    build:
+      context: .
+      dockerfile: Platform.Service.Notify/Dockerfile
+    env_file:
+      - Platform.Service.Notify/.env
+    ports:
+      - "8084:8080"
+    depends_on:
+      - rabbitmq
+      - mongo
+    networks:
+      - b2b-net
+
+  service.search:
+    build:
+      context: .
+      dockerfile: Platform.Service.Search/Dockerfile
+    env_file:
+      - Platform.Service.Search/.env
+    ports:
+      - "8085:8080"
+    depends_on:
+      - postgres
+      - rabbitmq
+      - mongo
+    networks:
+      - b2b-net
+
+  service.analytics:
+    build:
+      context: .
+      dockerfile: Platform.Service.Analytics/Dockerfile
+    env_file:
+      - Platform.Service.Analytics/.env
+    ports:
+      - "8086:8080"
+    depends_on:
+      - rabbitmq
+      - mongo
+    networks:
+      - b2b-net
+
+volumes:
+  postgres-data:
+  rabbitmq-data:
+  redis-data:
+  mongo-data:
+
+networks:
+  b2b-net:
+    driver: bridge
