@@ -76,7 +76,7 @@ public class UserService
 
         await _businessRepository.Save();
 
-        await _logging.WriteAsync(LogType.Activitty, LoggingAction.BusinessNewUserCreated, userCreatedEvent, ct);
+        await _logging.WriteAsync(LogType.Activity, LoggingAction.BusinessNewUserCreated, userCreatedEvent, ct);
 
         return Result< User>.Ok(newUser);
     }
@@ -127,7 +127,7 @@ public class UserService
 
         await _businessRepository.Save();
 
-        await _logging.WriteAsync(LogType.Activitty, LoggingAction.BusinessUserDeleted, userDeletedEvent, ct);
+        await _logging.WriteAsync(LogType.Activity, LoggingAction.BusinessUserDeleted, userDeletedEvent, ct);
 
         return Result.Ok();
     }

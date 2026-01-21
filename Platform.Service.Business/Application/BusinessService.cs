@@ -71,7 +71,7 @@ public class BusinessService
 
         await _businessRepository.Save();
 
-        await _logging.WriteAsync(LogType.Activitty, LoggingAction.BusinessCreated, businessCreatedEvent, ct);
+        await _logging.WriteAsync(LogType.Activity, LoggingAction.BusinessCreated, businessCreatedEvent, ct);
 
         return Result<Domain.Business.Business>.Ok(newBusiness);
     }
@@ -108,7 +108,7 @@ public class BusinessService
             OccurredAt = businessDeletedEvent.OccuredAt
         }, ct);
 
-        await _logging.WriteAsync(LogType.Activitty, LoggingAction.BusinessDeleted, businessDeletedEvent, ct);
+        await _logging.WriteAsync(LogType.Activity, LoggingAction.BusinessDeleted, businessDeletedEvent, ct);
 
         await _businessRepository.Save();
     }
@@ -173,7 +173,7 @@ public class BusinessService
 
         await _customerRepository.Save();
 
-        await _logging.WriteAsync(LogType.Activitty, LoggingAction.BusinessAddCustomer, customerAddedEvent, ct);
+        await _logging.WriteAsync(LogType.Activity, LoggingAction.BusinessAddCustomer, customerAddedEvent, ct);
 
         return customer;
     }

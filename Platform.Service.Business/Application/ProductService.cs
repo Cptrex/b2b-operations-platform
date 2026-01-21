@@ -81,7 +81,7 @@ public class ProductService
 
         await _productRepository.Save();
 
-        await _logging.WriteAsync(LogType.Activitty, LoggingAction.BusinessNewCatalogProduct, productAddedEvent, ct);
+        await _logging.WriteAsync(LogType.Activity, LoggingAction.BusinessNewCatalogProduct, productAddedEvent, ct);
 
         return Result<Product>.Ok(product);
     }
@@ -130,7 +130,7 @@ public class ProductService
 
         await _productRepository.Save();
 
-        await _logging.WriteAsync(LogType.Activitty, LoggingAction.BusinessRemoveCatalogProduct, productRemovedEvent, ct);
+        await _logging.WriteAsync(LogType.Activity, LoggingAction.BusinessRemoveCatalogProduct, productRemovedEvent, ct);
     }
 
     public async Task<Result<Product>> UpdateProductInfoAsync(Guid productId, string productName, string description, decimal price, CancellationToken ct)
@@ -184,7 +184,7 @@ public class ProductService
 
         await _productRepository.Save();
 
-        await _logging.WriteAsync(LogType.Activitty, LoggingAction.BusinessUpdateProduct, productUpdatedEvent, ct);
+        await _logging.WriteAsync(LogType.Activity, LoggingAction.BusinessUpdateProduct, productUpdatedEvent, ct);
 
         return Result<Product>.Ok(product);
     }
@@ -227,7 +227,7 @@ public class ProductService
 
         await _productRepository.Save();
 
-        await _logging.WriteAsync(LogType.Activitty, LoggingAction.BusinessSetProductAvailability, productAvailabilityChangedEvent, ct);
+        await _logging.WriteAsync(LogType.Activity, LoggingAction.BusinessSetProductAvailability, productAvailabilityChangedEvent, ct);
 
         return Result<Product>.Ok(product);
     }

@@ -29,7 +29,7 @@ public class SearchService
             throw new ArgumentException("Business name cannot be empty", nameof(businessName));
         }
 
-        await _logging.WriteAsync(LogType.Activitty, LoggingAction.SearchBusinessByName, businessName, ct);
+        await _logging.WriteAsync(LogType.Activity, LoggingAction.SearchBusinessByName, businessName, ct);
 
         return await _businessRepository.SearchByNameAsync(businessName, ct);
     }
@@ -41,7 +41,7 @@ public class SearchService
             throw new ArgumentException("User name cannot be empty", nameof(userName));
         }
 
-        await _logging.WriteAsync(LogType.Activitty, LoggingAction.SearchUserByName, userName, ct);
+        await _logging.WriteAsync(LogType.Activity, LoggingAction.SearchUserByName, userName, ct);
 
         return await _userRepository.SearchByUserNameAsync(userName, ct);
     }
@@ -53,7 +53,7 @@ public class SearchService
             throw new ArgumentException("Login cannot be empty", nameof(login));
         }
 
-        await _logging.WriteAsync(LogType.Activitty, LoggingAction.SearchAccountByLogin, login, ct);
+        await _logging.WriteAsync(LogType.Activity, LoggingAction.SearchAccountByLogin, login, ct);
 
         return await _accountRepository.SearchByLoginAsync(login, ct);
     }
@@ -65,7 +65,7 @@ public class SearchService
             throw new ArgumentException("Email cannot be empty", nameof(email));
         }
 
-        await _logging.WriteAsync(LogType.Activitty, LoggingAction.SearchAccountByEmail, email, ct);
+        await _logging.WriteAsync(LogType.Activity, LoggingAction.SearchAccountByEmail, email, ct);
 
         return await _accountRepository.SearchByEmailAsync(email, ct);
     }
@@ -77,7 +77,7 @@ public class SearchService
             throw new ArgumentException("Name cannot be empty", nameof(name));
         }
 
-        await _logging.WriteAsync(LogType.Activitty, LoggingAction.SearchAccountByName, name, ct);
+        await _logging.WriteAsync(LogType.Activity, LoggingAction.SearchAccountByName, name, ct);
 
         return await _accountRepository.SearchByNameAsync(name, ct);
     }

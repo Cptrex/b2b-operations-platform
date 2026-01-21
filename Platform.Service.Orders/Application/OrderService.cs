@@ -108,8 +108,8 @@ public class OrderService
 
         await _orderRepository.Save();
 
-        await _logging.WriteAsync(LogType.Activitty, LoggingAction.CreateOrder, orderCreatedEvent, ct);
-        await _logging.WriteAsync(LogType.Activitty, LoggingAction.CreateCustomer, customerAddedEvent, ct);
+        await _logging.WriteAsync(LogType.Activity, LoggingAction.CreateOrder, orderCreatedEvent, ct);
+        await _logging.WriteAsync(LogType.Activity, LoggingAction.CreateCustomer, customerAddedEvent, ct);
 
         return Result<Order>.Ok(order);
     }
@@ -151,7 +151,7 @@ public class OrderService
 
         await _orderRepository.Save();
 
-        await _logging.WriteAsync(LogType.Activitty, LoggingAction.ConfirmOrder, orderConfirmedEvent, ct);
+        await _logging.WriteAsync(LogType.Activity, LoggingAction.ConfirmOrder, orderConfirmedEvent, ct);
 
         return Result<Order>.Ok(order);
     }
@@ -193,7 +193,7 @@ public class OrderService
 
         await _orderRepository.Save();
 
-        await _logging.WriteAsync(LogType.Activitty, LoggingAction.CancelOrder, orderCancelledEvent, ct);
+        await _logging.WriteAsync(LogType.Activity, LoggingAction.CancelOrder, orderCancelledEvent, ct);
 
         return Result<Order>.Ok(order);
     }
@@ -235,7 +235,7 @@ public class OrderService
 
         await _orderRepository.Save();
 
-        await _logging.WriteAsync(LogType.Activitty, LoggingAction.PaymentStatus, paymentStatusUpdatedEvent, ct);
+        await _logging.WriteAsync(LogType.Activity, LoggingAction.PaymentStatus, paymentStatusUpdatedEvent, ct);
 
         return Result<Order>.Ok(order);
     }
@@ -277,7 +277,7 @@ public class OrderService
 
         await _orderRepository.Save();
 
-        await _logging.WriteAsync(LogType.Activitty, LoggingAction.UpdateDeliveryStatus, deliveryStatusUpdatedEvent, ct);
+        await _logging.WriteAsync(LogType.Activity, LoggingAction.UpdateDeliveryStatus, deliveryStatusUpdatedEvent, ct);
 
         return Result<Order>.Ok(order);
     }
