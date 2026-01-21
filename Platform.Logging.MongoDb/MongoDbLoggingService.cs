@@ -7,11 +7,12 @@ namespace Platform.Logging.MongoDb;
 
 public class MongoDbLoggingService : ILoggingService
 {
-    private readonly IMongoCollection<LogDocument> _collection;
+    private readonly IMongoDatabase _database;
     private readonly IActorProvider _actorPrivder;
-    public MongoDbLoggingService(IMongoCollection<LogDocument> collection, IActorProvider actorPrivder)
+
+    public MongoDbLoggingService(IMongoDatabase database, IActorProvider actorPrivder)
     {
-        _collection = collection;
+        _database = database;
         _actorPrivder = actorPrivder;
     }
 
@@ -27,6 +28,16 @@ public class MongoDbLoggingService : ILoggingService
             AtUtc = DateTime.UtcNow
         };
 
-        await _collection.InsertOneAsync(doc, cancellationToken: ct);
+        var collectionName = type switch
+        {
+            LogType.Security => "audit_security",
+            LogType.Activity => "auth_activity",
+            LogType.Technical => "audit_technical",
+            _ => "logs"
+        };
+
+        var collection = _database.GetCollection<LogDocument>(collectionName);
+
+        await collection.InsertOneAsync(doc, cancellationToken: ct);
     }
 }

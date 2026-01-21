@@ -3,6 +3,6 @@
 public enum LogType
 {
     Security = 0,
-    Activitty = 1,
+    Activity = 1,
     Technical = 2
 }

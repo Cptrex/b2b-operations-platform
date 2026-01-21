@@ -97,7 +97,7 @@ public class AccountService
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        await _loggingService.WriteAsync(LogType.Activitty, LoggingAction.CreateAccount, accountCreatedEvent, cancellationToken);
+        await _loggingService.WriteAsync(LogType.Activity, LoggingAction.CreateAccount, accountCreatedEvent, cancellationToken);
 
         return Result<Account>.Ok(createdAccount);
     }
@@ -142,7 +142,7 @@ public class AccountService
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        await _loggingService.WriteAsync(LogType.Activitty, LoggingAction.DeleteAccount, accountDeletedEvent, cancellationToken);
+        await _loggingService.WriteAsync(LogType.Activity, LoggingAction.DeleteAccount, accountDeletedEvent, cancellationToken);
 
         return Result.Ok();
     }
@@ -156,7 +156,7 @@ public class AccountService
 
         var accounts = await _accountRepository.GetAllByBusinessIdAsync(businessId, cancellationToken);
 
-        await _loggingService.WriteAsync(LogType.Activitty, LoggingAction.GetAllBusinessAccount, businessId, cancellationToken);
+        await _loggingService.WriteAsync(LogType.Activity, LoggingAction.GetAllBusinessAccount, businessId, cancellationToken);
 
         return Result<List<Account>>.Ok(accounts);
     }
