@@ -16,6 +16,7 @@ using Platform.Shared.Cache.Extensions;
 using Platform.Shared.Messaging.Contracts;
 using Platform.Shared.Messaging.Extensions;
 using Polly;
+using Prometheus;
 using System.Security.Cryptography;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -133,7 +134,7 @@ builder.Services.AddTransient<PollyDelegatingHandler>();
 builder.Services.AddScoped<OrderService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
-builder.Services.AddRadisCacheProvider(builder.Configuration);
+builder.Services.AddRedisCacheProvider(builder.Configuration);
 
 builder.Services.AddRabbitMqConsumer(builder.Configuration);
 builder.Services.AddRabbitMqPublisher(builder.Configuration);
@@ -150,6 +151,9 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+app.UseHttpMetrics();
+app.MapMetrics();
 
 if (app.Environment.IsDevelopment())
 {

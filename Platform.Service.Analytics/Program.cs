@@ -1,7 +1,8 @@
-using Platform.Logging.MongoDb.Extensions;
-using Platform.Shared.Messaging.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Platform.Identity.Http;
+using Platform.Logging.MongoDb.Extensions;
+using Platform.Shared.Messaging.Extensions;
+using Prometheus;
 using System.Security.Cryptography;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -91,6 +92,9 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+app.UseHttpMetrics();
+app.MapMetrics();
 
 if (app.Environment.IsDevelopment())
 {

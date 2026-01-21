@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Platform.Identity.Http;
+using Platform.Logging.MongoDb.Extensions;
 using Platform.Service.Search.Application;
 using Platform.Service.Search.Domain.Account;
 using Platform.Service.Search.Domain.Business;
@@ -12,13 +14,12 @@ using Platform.Service.Search.Infrastructure.Messaging;
 using Platform.Service.Search.Infrastructure.Security;
 using Platform.Service.Search.Infrastructure.Security.Background;
 using Platform.Shared.Abstractions.Contracts.Auth;
+using Platform.Shared.Cache.Extensions;
 using Platform.Shared.Messaging.Contracts;
 using Platform.Shared.Messaging.Extensions;
 using Polly;
+using Prometheus;
 using System.Security.Cryptography;
-using Platform.Logging.MongoDb.Extensions;
-using Platform.Identity.Http;
-using Platform.Shared.Cache.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -137,7 +138,7 @@ builder.Services.AddScoped<IBusinessRepository, BusinessRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 
-builder.Services.AddRadisCacheProvider(builder.Configuration);
+builder.Services.AddRedisCacheProvider(builder.Configuration);
 
 builder.Services.AddRabbitMqConsumer(builder.Configuration);
 builder.Services.AddRabbitMqPublisher(builder.Configuration);
@@ -154,6 +155,9 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+app.UseHttpMetrics();
+app.MapMetrics();
 
 if (app.Environment.IsDevelopment())
 {

@@ -3,6 +3,7 @@ using Platform.Shared.Messaging.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Platform.Identity.Http;
 using System.Security.Cryptography;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -91,6 +92,9 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+app.UseHttpMetrics();
+app.MapMetrics();
 
 if (app.Environment.IsDevelopment())
 {

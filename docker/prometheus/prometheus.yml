@@ -1,0 +1,31 @@
+global:
+  scrape_interval: 10s
+
+scrape_configs:
+  - job_name: "auth.service"
+    static_configs:
+      - targets: ["auth.service:8080"]
+
+  - job_name: "auth.business"
+    static_configs:
+      - targets: ["auth.business:8080"]
+
+  - job_name: "service.business"
+    static_configs:
+      - targets: ["service.business:8080"]
+
+  - job_name: "service.orders"
+    static_configs:
+      - targets: ["service.orders:8080"]
+
+  - job_name: "service.notify"
+    static_configs:
+      - targets: ["service.notify:8080"]
+
+  - job_name: "service.search"
+    static_configs:
+      - targets: ["service.search:8080"]
+
+  - job_name: "service.analytics"
+    static_configs:
+      - targets: ["service.analytics:8080"]

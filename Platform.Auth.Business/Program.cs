@@ -6,11 +6,12 @@ using Platform.Auth.Business.Domain.Account;
 using Platform.Auth.Business.Infrasturcture.Cache;
 using Platform.Auth.Business.Infrasturcture.Db;
 using Platform.Auth.Business.Infrasturcture.Messaging;
+using Platform.Identity.Http;
 using Platform.Logging.MongoDb.Extensions;
 using Platform.Shared.Cache.Extensions;
 using Platform.Shared.Messaging.Contracts;
 using Platform.Shared.Messaging.Extensions;
-using Platform.Identity.Http;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,7 +37,7 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddSingleton<IPasswordService, PasswordService>();
 
 builder.Services.AddClientTokenIssuer(builder.Configuration, "ClientJwt");
-builder.Services.AddRadisCacheProvider(builder.Configuration);
+builder.Services.AddRedisCacheProvider(builder.Configuration);
 
 builder.Services.AddHostedService<UploadCacheJwtValidationPublicKeyHosted>();
 builder.Services.AddHostedService<OutboxPublisherBackgroundService>();
@@ -51,6 +52,8 @@ builder.Services.AddMongoDbLogging(builder.Configuration);
 
 var app = builder.Build();
 
+app.UseHttpMetrics();
+app.MapMetrics();
 
 if (app.Environment.IsDevelopment())
 {

@@ -5,6 +5,7 @@ using Platform.Auth.Service.Services.ServiceToken;
 using Platform.Auth.Service.Services.ServiceToken.Contracts;
 using Platform.Identity.Http;
 using Platform.Logging.MongoDb.Extensions;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,9 @@ builder.Services.AddIdentityHttpActor();
 builder.Services.AddMongoDbLogging(builder.Configuration);
 
 var app = builder.Build();
+
+app.UseHttpMetrics();
+app.MapMetrics();
 
 if (app.Environment.IsDevelopment())
 {
