@@ -5,6 +5,7 @@ using Platform.Auth.Service.Services.ServiceToken;
 using Platform.Auth.Service.Services.ServiceToken.Contracts;
 using Platform.Identity.Http;
 using Platform.Logging.MongoDb.Extensions;
+using Platform.Shared.Cache.Extensions;
 using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +26,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddSingleton<IServiceCredentialStore, ServiceTokenCredentialStore>();
 builder.Services.AddServiceTokenIssuer(builder.Configuration, "ServiceJwt");
 
+builder.Services.AddRedisCacheProvider(builder.Configuration);
 builder.Services.AddHostedService<UploadCacheJwtValidationPublicKeyHosted>();
 
 builder.Services.AddIdentityHttpActor();

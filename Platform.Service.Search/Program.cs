@@ -142,7 +142,7 @@ builder.Services.AddRedisCacheProvider(builder.Configuration);
 
 builder.Services.AddRabbitMqConsumer(builder.Configuration);
 builder.Services.AddRabbitMqPublisher(builder.Configuration);
-builder.Services.AddSingleton<IRabbitMqMessageConsumer, SearchRabbitMqConsumer>();
+builder.Services.AddScoped<IRabbitMqMessageConsumer, SearchRabbitMqConsumer>();
 
 builder.Services.AddHostedService<GetAuthTokenOnStartHosted>();
 builder.Services.AddHostedService<OutboxPublisherBackgroundService>();

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Platform.Service.Orders.Api.Dto;
 using Platform.Service.Orders.Application;
@@ -6,6 +7,7 @@ using Platform.Service.Orders.Domain.Order;
 namespace Platform.Service.Orders.Api;
 
 [ApiController]
+[Authorize(Policy = "Client")]
 [Route("api/v1/orders")]
 public class OrderController : ControllerBase
 {

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Platform.Service.Business.Infrastructure.Messaging;
 using Platform.Shared.Messaging.Contracts;
@@ -12,15 +13,15 @@ public sealed class RabbitMqConsumerHostedService : BackgroundService
 {
     private readonly IConnection _connection;
     private readonly RabbitMqOptions _opt;
-    private readonly IRabbitMqMessageConsumer _handler;
+    private readonly IServiceScopeFactory _scopeFactory;
 
     private IChannel? _channel;
 
-    public RabbitMqConsumerHostedService(IRabbitMqMessageConsumer handler, IConnection connection, IOptions<RabbitMqOptions> opt)
+    public RabbitMqConsumerHostedService(IServiceScopeFactory scopeFactory, IConnection connection, IOptions<RabbitMqOptions> opt)
     {
+        _scopeFactory = scopeFactory;
         _connection = connection;
         _opt = opt.Value;
-        _handler = handler;
     }
 
     public override async Task StartAsync(CancellationToken cancellationToken)
@@ -78,7 +79,10 @@ public sealed class RabbitMqConsumerHostedService : BackgroundService
                 var routingKey = ea.RoutingKey;
                 var body = Encoding.UTF8.GetString(ea.Body.ToArray());
 
-                await _handler.HandleAsync(ea.RoutingKey, body, stoppingToken);
+                using var scope = _scopeFactory.CreateScope();
+                var handler = scope.ServiceProvider.GetRequiredService<IRabbitMqMessageConsumer>();
+
+                await handler.HandleAsync(ea.RoutingKey, body, stoppingToken);
 
                 await _channel.BasicAckAsync(ea.DeliveryTag, multiple: false, cancellationToken: stoppingToken);
             }

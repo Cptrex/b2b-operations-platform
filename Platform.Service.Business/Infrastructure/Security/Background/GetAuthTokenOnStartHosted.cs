@@ -15,10 +15,7 @@ public class GetAuthTokenOnStartHosted : IHostedService
     {
         var result = await _serviceTokenProvider.GetTokenAsync();
 
-        if (string.IsNullOrWhiteSpace(result) == false)
-        {
-            Console.WriteLine($"Authorized for http service-to-service messaging: {result}");
-        }
+        Console.WriteLine($"Authorized for http service-to-service messaging: {result}");
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

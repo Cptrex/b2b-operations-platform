@@ -44,7 +44,7 @@ builder.Services.AddHostedService<OutboxPublisherBackgroundService>();
 
 builder.Services.AddRabbitMqConsumer(builder.Configuration);
 builder.Services.AddRabbitMqPublisher(builder.Configuration);
-builder.Services.AddSingleton<IRabbitMqMessageConsumer, AuthBusinessRabbitMqMessageConsumer>();
+builder.Services.AddScoped<IRabbitMqMessageConsumer, AuthBusinessRabbitMqMessageConsumer>();
 
 builder.Services.AddIdentityHttpActor();
 

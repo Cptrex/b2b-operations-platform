@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Platform.Service.Search.Application;
 
 namespace Platform.Service.Search.Api;
 
 [ApiController]
+[Authorize(Policy = "Client")]
 [Route("api/v1/search")]
 public class SearchController : ControllerBase
 {

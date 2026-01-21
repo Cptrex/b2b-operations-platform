@@ -7,9 +7,9 @@ namespace Platform.Auth.Business.Infrasturcture.Cache;
 public class UploadCacheJwtValidationPublicKeyHosted : IHostedService
 {
     private readonly ICacheProvider _cache;
-    private readonly ITokenIssuer _token;
+    private readonly IClientTokenIssuer _token;
 
-    public UploadCacheJwtValidationPublicKeyHosted(ICacheProvider cache, ITokenIssuer token)
+    public UploadCacheJwtValidationPublicKeyHosted(ICacheProvider cache, IClientTokenIssuer token)
     {
         _cache = cache;
         _token = token;
