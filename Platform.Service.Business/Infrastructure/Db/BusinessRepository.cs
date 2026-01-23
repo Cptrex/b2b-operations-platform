@@ -22,21 +22,21 @@ public class BusinessRepository : IBusinessRepository
         await _context.Businesses.AddAsync(business);
     }
 
-    public async Task CreateBusinessAsync(Domain.Business.Business business)
+    public async Task<Domain.Business.Business> CreateBusinessAsync(Domain.Business.Business business)
     {
-        await _context.Businesses.AddAsync(business);
+        var newEntity = await _context.Businesses.AddAsync(business);
+
+        return newEntity.Entity;
     }
 
-    public Task DeleteBusinessAsync(Domain.Business.Business business)
+    public async Task DeleteBusinessAsync(Domain.Business.Business business)
     {
-        _context.Businesses.Remove(business);
-        return Task.CompletedTask;
+        await _context.Businesses.Remove(business);
     }
 
-    public Task UpdateBusinessAsync(Domain.Business.Business business)
+    public async Task UpdateBusinessAsync(Domain.Business.Business business)
     {
-        _context.Businesses.Update(business);
-        return Task.CompletedTask;
+        await _context.Businesses.ExecuteUpdateAsync(business);
     }
 
     public async Task DeleteBusinessByIdAsync(string businessKey)
@@ -52,5 +52,10 @@ public class BusinessRepository : IBusinessRepository
     public async Task Save()
     {
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<Domain.Business.Business?> GetByBusinessNameAsync(string businessName)
+    {
+        return await _context.Businesses.FirstOrDefault(b => b.BusinessName == businessName);
     }
 }

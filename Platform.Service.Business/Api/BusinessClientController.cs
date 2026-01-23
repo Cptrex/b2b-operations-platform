@@ -6,8 +6,7 @@ using Platform.Service.Business.Application;
 namespace Platform.Service.Business.Api;
 
 [ApiController]
-[Authorize(Policy = "Client")]
-[Route("api/v1/client/[controller]")]
+[Route("api/v1/client/business")]
 public class BusinessClientController : ControllerBase
 {
     private readonly BusinessService _businessService;
@@ -26,7 +25,7 @@ public class BusinessClientController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateBusiness(CreateBusinessDto dto, CancellationToken ct)
     {
-        var result = await _businessService.CreateBusinessAsync(dto.BusinessId, dto.BusinessName, ct);
+        var result = await _businessService.CreateBusinessAsync(dto.BusinessName, ct);
 
         if (result.IsSuccess == false)
         {

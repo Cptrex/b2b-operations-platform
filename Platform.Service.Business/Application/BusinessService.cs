@@ -28,28 +28,23 @@ public class BusinessService
         _logging = logging;
     }
 
-    public async Task<Result<Domain.Business.Business>> CreateBusinessAsync(string businessId, string businessName, CancellationToken ct)
+    public async Task<Result<Domain.Business.Business>> CreateBusinessAsync(string businessName, CancellationToken ct)
     {
-        if (string.IsNullOrWhiteSpace(businessId))
-        {
-            throw new ArgumentNullException(nameof(businessId));
-        }
-
         if (string.IsNullOrWhiteSpace(businessName))
         {
             throw new ArgumentNullException(nameof(businessName));
         }
 
-        var existingBusiness = await _businessRepository.GetByBusinessByIdAsync(businessId);
+        var existingBusiness = await _businessRepository.GetByBusinessNameAsync(businessName);
 
         if (existingBusiness is not null)
         {
-            return Result<Domain.Business.Business>.Fail(new Error($"Business with id '{businessId}' already exists", ResultErrorCategory.Conflict));
+            return Result<Domain.Business.Business>.Fail(new Error($"Business with name '{businessName}' already exists", ResultErrorCategory.Conflict));
         }
 
-        var newBusiness = new Domain.Business.Business(businessId, businessName);
+        var newBusiness = new Domain.Business.Business(businessName);
 
-        await _businessRepository.CreateBusinessAsync(newBusiness);
+        newBusiness = await _businessRepository.CreateBusinessAsync(newBusiness);
 
         var businessCreatedEvent = new BusinessCreatedEvent
         {

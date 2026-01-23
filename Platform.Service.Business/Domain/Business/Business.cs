@@ -68,16 +68,16 @@ public class Business
 
     private Business() 
     {
-        BusinessId = string.Empty;
+        BusinessId = Guid.Empty;
         BusinessName = string.Empty;
         _users = [];
         _products = [];
         _customers = [];
     }
 
-    public Business(string businessId, string businessName)
+    public Business( string businessName)
     {
-        BusinessId = businessId;
+        BusinessId = Guid.NewGuid();
         BusinessName = businessName;
         CreatedAt = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         _users = [];
