@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   prometheus:
@@ -10,6 +10,7 @@ services:
       - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     networks:
       - b2b-net
+
   postgres:
     image: postgres:15
     restart: always
@@ -19,6 +20,11 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
     networks:
       - b2b-net
 
@@ -28,11 +34,18 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: svc
       RABBITMQ_DEFAULT_PASS: STRONG_PASSWORD
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: "-rabbit load_definitions \"/etc/rabbitmq/definitions.json\""
     ports:
       - "5672:5672"
       - "15672:15672"
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
+      - ./docker/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
     networks:
       - b2b-net
 
@@ -43,6 +56,11 @@ services:
       - "6379:6379"
     volumes:
       - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
     networks:
       - b2b-net
 
@@ -57,6 +75,11 @@ services:
     volumes:
       - mongo-data:/data/db
       - ./docker/mongo/init.js:/docker-entrypoint-initdb.d/init.js:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --quiet --eval 'db.runCommand({ ping: 1 }).ok' | grep 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
     networks:
       - b2b-net
 
@@ -64,15 +87,25 @@ services:
     build:
       context: .
       dockerfile: Platform.Auth.Service/Dockerfile
+    restart: always
     env_file:
       - Platform.Auth.Service/.env
     ports:
       - "5257:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/api/v1/internal/token/health-check || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
     depends_on:
-      - postgres
-      - rabbitmq
-      - mongo
-      - redis
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - b2b-net
 
@@ -80,14 +113,23 @@ services:
     build:
       context: .
       dockerfile: Platform.Auth.Business/Dockerfile
+    restart: always
     env_file:
       - Platform.Auth.Business/.env
     ports:
       - "8081:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/api/v1/health/health-check || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
     depends_on:
-      - postgres
-      - rabbitmq
-      - mongo
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
     networks:
       - b2b-net
 
@@ -95,15 +137,29 @@ services:
     build:
       context: .
       dockerfile: Platform.Service.Business/Dockerfile
+    restart: always
     env_file:
       - Platform.Service.Business/.env
     ports:
       - "8082:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/api/v1/auth/health-check || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
     depends_on:
-      - postgres
-      - rabbitmq
-      - mongo
-      - redis
+      auth.service:
+        condition: service_healthy
+      auth.business:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - b2b-net
 
@@ -111,14 +167,27 @@ services:
     build:
       context: .
       dockerfile: Platform.Service.Orders/Dockerfile
+    restart: always
     env_file:
       - Platform.Service.Orders/.env
     ports:
       - "8083:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
     depends_on:
-      - postgres
-      - rabbitmq
-      - mongo
+      auth.service:
+        condition: service_healthy
+      auth.business:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
     networks:
       - b2b-net
 
@@ -126,13 +195,25 @@ services:
     build:
       context: .
       dockerfile: Platform.Service.Notify/Dockerfile
+    restart: always
     env_file:
       - Platform.Service.Notify/.env
     ports:
       - "8084:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
     depends_on:
-      - rabbitmq
-      - mongo
+      auth.service:
+        condition: service_healthy
+      auth.business:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
     networks:
       - b2b-net
 
@@ -140,14 +221,27 @@ services:
     build:
       context: .
       dockerfile: Platform.Service.Search/Dockerfile
+    restart: always
     env_file:
       - Platform.Service.Search/.env
     ports:
       - "8085:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
     depends_on:
-      - postgres
-      - rabbitmq
-      - mongo
+      auth.service:
+        condition: service_healthy
+      auth.business:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
     networks:
       - b2b-net
 
@@ -155,13 +249,25 @@ services:
     build:
       context: .
       dockerfile: Platform.Service.Analytics/Dockerfile
+    restart: always
     env_file:
       - Platform.Service.Analytics/.env
     ports:
       - "8086:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
     depends_on:
-      - rabbitmq
-      - mongo
+      auth.service:
+        condition: service_healthy
+      auth.business:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
     networks:
       - b2b-net
 

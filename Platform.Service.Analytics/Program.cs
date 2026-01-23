@@ -2,8 +2,15 @@ using Microsoft.IdentityModel.Tokens;
 using Platform.Identity.Http;
 using Platform.Logging.MongoDb.Extensions;
 using Platform.Shared.Messaging.Extensions;
+using Platform.Shared.Abstractions.Contracts.Auth;
+using Platform.Shared.Cache.Extensions;
+using Platform.Service.Analytics.Infrastructure.Http.Clients;
+using Platform.Service.Analytics.Infrastructure.Security;
 using Prometheus;
 using System.Security.Cryptography;
+using Polly;
+using Platform.Service.Analytics.Infrastructure.Security.Background;
+using Platform.Service.Analytics.Infrastructure.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -90,6 +97,27 @@ builder.Services.AddRabbitMqPublisher(builder.Configuration);
 builder.Services.AddIdentityHttpActor();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+
+// register auth http client, token managers and hosted services to fetch keys/tokens
+builder.Services.AddRedisCacheProvider(builder.Configuration);
+
+builder.Services.AddHttpClient<IAuthClient, AuthHttpClient>("AuthService", client =>
+{
+    var url =
+        $"{builder.Configuration["AuthService:Scheme"]}://" +
+        $"{builder.Configuration["AuthService:Host"]}:" +
+        $"{builder.Configuration["AuthService:Port"]}";
+
+    client.BaseAddress = new Uri(url);
+    client.Timeout = TimeSpan.FromSeconds(10);
+});
+builder.Services.AddSingleton<IAuthServiceTokenManager, AuthServiceTokenManager>();
+builder.Services.AddSingleton<IServiceTokenProvider, ServiceTokenProvider>();
+builder.Services.AddSingleton<IAsyncPolicy<HttpResponseMessage>>(PollyPolicies.BuildPolicy());
+builder.Services.AddTransient<PollyDelegatingHandler>();
+
+builder.Services.AddHostedService<FetchServiceTokenHosted>();
+builder.Services.AddHostedService<FetchClientTokenHosted>();
 
 var app = builder.Build();
 

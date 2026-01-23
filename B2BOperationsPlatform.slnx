@@ -18,7 +18,10 @@
   <Folder Name="/Solution Items/docker/prometheus/">
     <File Path="docker/prometheus/prometheus.yml" />
   </Folder>
-  <Project Path="Paltform.Auth.Shared/Paltform.Auth.Shared.csproj" Id="9c099a90-e3fd-4561-8689-e2a517c5c4b3" />
+  <Folder Name="/Solution Items/docker/rabbitmq/">
+    <File Path="docker/rabbitmq/definitions.json" />
+  </Folder>
+  <Project Path="Platform.Auth.Shared/Platform.Auth.Shared.csproj" Id="9c099a90-e3fd-4561-8689-e2a517c5c4b3" />
   <Project Path="Platform.Auth.Business/Platform.Auth.Business.csproj" />
   <Project Path="Platform.Auth.Service/Platform.Auth.Service.csproj" />
   <Project Path="Platform.Identity.Abstractions/Platform.Identity.Abstractions.csproj" Id="d078c32f-6585-422c-ba3d-7adb11627b89" />

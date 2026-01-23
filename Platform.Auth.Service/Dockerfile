@@ -3,7 +3,7 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 COPY ["Platform.Auth.Service/Platform.Auth.Service.csproj", "Platform.Auth.Service/"]
-COPY ["Paltform.Auth.Shared/Paltform.Auth.Shared.csproj", "Paltform.Auth.Shared/"]
+COPY ["Platform.Auth.Shared/Platform.Auth.Shared.csproj", "Platform.Auth.Shared/"]
 COPY ["Platform.Shared.Cache/Platform.Shared.Cache.csproj", "Platform.Shared.Cache/"]
 COPY ["Platform.Shared.Cache.Keys/Platform.Shared.Cache.Keys.csproj", "Platform.Shared.Cache.Keys/"]
 COPY ["Platform.Shared.Results/Platform.Shared.Results.csproj", "Platform.Shared.Results/"]
@@ -16,6 +16,9 @@ RUN dotnet publish "Platform.Auth.Service.csproj" -c $BUILD_CONFIGURATION -o /ap
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 RUN groupadd -r appuser && useradd -r -g appuser appuser
 COPY --from=build /app/publish .
 RUN chown -R appuser:appuser /app

@@ -1,0 +1,21 @@
+{
+  "vhosts": [
+    { "name": "/platform" }
+  ],
+  "users": [
+    {
+      "name": "svc",
+      "password": "STRONG_PASSWORD",
+      "tags": "administrator"
+    }
+  ],
+  "permissions": [
+    {
+      "user": "svc",
+      "vhost": "/platform",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ]
+}

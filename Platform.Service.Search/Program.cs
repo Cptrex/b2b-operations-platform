@@ -114,7 +114,6 @@ builder.Services.AddAuthorizationBuilder()
         policy.AddAuthenticationSchemes("ClientBearer")
               .RequireAuthenticatedUser()
               .RequireClaim("type", "user"));
-
 builder.Services.AddHttpClient<IAuthClient, AuthHttpClient>("AuthService", client =>
 {
     var url =
@@ -140,11 +139,13 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 
 builder.Services.AddRedisCacheProvider(builder.Configuration);
 
+
 builder.Services.AddRabbitMqConsumer(builder.Configuration);
 builder.Services.AddRabbitMqPublisher(builder.Configuration);
 builder.Services.AddScoped<IRabbitMqMessageConsumer, SearchRabbitMqConsumer>();
 
-builder.Services.AddHostedService<GetAuthTokenOnStartHosted>();
+builder.Services.AddHostedService<FetchServiceTokenHosted>();
+builder.Services.AddHostedService<FetchClientTokenHosted>();
 builder.Services.AddHostedService<OutboxPublisherBackgroundService>();
 
 builder.Services.AddIdentityHttpActor();

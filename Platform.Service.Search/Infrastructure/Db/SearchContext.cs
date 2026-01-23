@@ -13,6 +13,7 @@ public class SearchContext : DbContext
 
     public SearchContext(DbContextOptions<SearchContext> options) : base(options)
     {
+        Database.EnsureCreated();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

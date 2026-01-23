@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Paltform.Auth.Shared.JwtToken.Contracts;
+using Platform.Auth.Shared.JwtToken.Contracts;
 using Platform.Auth.Service.Dto;
 using Platform.Auth.Service.Services.Logging;
 using Platform.Auth.Service.Services.ServiceToken.Contracts;

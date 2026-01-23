@@ -1,5 +1,6 @@
 ﻿using Platform.Service.Orders.Infrastructure.Http.Dtos;
 using Platform.Shared.Abstractions.Contracts.Auth;
+using Platform.Shared.Results;
 using System.Text;
 using System.Text.Json;
 
@@ -42,15 +43,20 @@ public class AuthHttpClient : IAuthClient
 
         response.EnsureSuccessStatusCode();
 
-        var dto = await response.Content.ReadFromJsonAsync<AuthTokenResponseDto>();
+        var result = await response.Content.ReadFromJsonAsync<Result<AuthTokenResponseDto>>();
 
-        if (dto is null)
+        if (result is null)
         {
             throw new InvalidOperationException("dto is empty");
         }
 
-        _rsaKeyManager.SaveAuthServicePublicKey(dto.PublicKey);
+        if (result.IsSuccess == false)
+        {
+            throw new InvalidOperationException("Get service token result failure");
+        }
 
-        return new ServiceTokenResult(dto.Token, dto.ExpiresAt, dto.PublicKey);
+        _rsaKeyManager.SaveAuthServicePublicKey(result.Value.PublicKey);
+
+        return new ServiceTokenResult(result.Value.Token, result.Value.ExpiresAt, result.Value.PublicKey);
     }
 }

@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using Platform.Identity.Abstractions.Contracts;
 using Platform.Logging.MongoDb.Contracts;
 using System.Reflection;
@@ -24,7 +25,7 @@ public class MongoDbLoggingService : ILoggingService
             Action = action,
             Platform = Assembly.GetEntryAssembly()?.GetName().Name ?? "unknown",
             Source = _actorPrivder.GetCurrent()?.ActorId ?? "unknown",
-            Payload = payload,
+            Payload = payload.ToBsonDocument(),
             AtUtc = DateTime.UtcNow
         };
 

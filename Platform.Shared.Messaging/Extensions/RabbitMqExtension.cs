@@ -19,7 +19,6 @@ public static class RabbitMqExtension
             services.TryAddSingleton<IConnection>(sp =>
             {
                 var opt = sp.GetRequiredService<IOptions<RabbitMqOptions>>().Value;
-
                 var factory = new ConnectionFactory
                 {
                     HostName = opt.Host,
@@ -28,6 +27,8 @@ public static class RabbitMqExtension
                     Password = opt.Password,
                     VirtualHost = opt.VirtualHost
                 };
+                
+                Console.WriteLine($"factory: {factory.HostName} {factory.Port} {factory.UserName} {factory.Password} {factory.VirtualHost}");
 
                 return factory.CreateConnectionAsync().GetAwaiter().GetResult();
             });

@@ -1,4 +1,4 @@
-﻿using Paltform.Auth.Shared.JwtToken.Results;
+﻿using Platform.Auth.Shared.JwtToken.Results;
 
 namespace Platform.Auth.Business.Application;
 

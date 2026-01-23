@@ -22,8 +22,23 @@ using Prometheus;
 using System.Security.Cryptography;
 
 var builder = WebApplication.CreateBuilder(args);
-
 builder.Services.AddDbContext<BusinessContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
+
+builder.Services.AddHttpClient<IAuthClient, AuthHttpClient>("AuthService", client =>
+{
+    var url =
+        $"{builder.Configuration["AuthService:Scheme"]}://" +
+        $"{builder.Configuration["AuthService:Host"]}:" +
+        $"{builder.Configuration["AuthService:Port"]}";
+
+    client.BaseAddress = new Uri(url);
+    client.Timeout = TimeSpan.FromSeconds(10);
+});
+
+builder.Services.AddSingleton<IAuthServiceTokenManager, AuthServiceTokenManager>();
+builder.Services.AddSingleton<IServiceTokenProvider, ServiceTokenProvider>();
+builder.Services.AddSingleton<IAsyncPolicy<HttpResponseMessage>>(PollyPolicies.BuildPolicy());
+builder.Services.AddTransient<PollyDelegatingHandler>();
 
 builder.Services
     .AddAuthentication()
@@ -115,23 +130,6 @@ builder.Services.AddAuthorizationBuilder()
               .RequireAuthenticatedUser()
               .RequireClaim("type", "user"));
 
-builder.Services.AddHttpClient<IAuthClient, AuthHttpClient>("AuthService", client =>
-{
-    var url =
-        $"{builder.Configuration["AuthService:Scheme"]}://" +
-        $"{builder.Configuration["AuthService:Host"]}:" +
-        $"{builder.Configuration["AuthService:Port"]}";
-
-    client.BaseAddress = new Uri(url);
-    client.Timeout = TimeSpan.FromSeconds(10);
-});
-builder.Services.AddHttpClient("InternalServices").AddHttpMessageHandler<PollyDelegatingHandler>();
-
-builder.Services.AddSingleton<IAuthServiceTokenManager, AuthServiceTokenManager>();
-builder.Services.AddSingleton<IServiceTokenProvider, ServiceTokenProvider>();
-builder.Services.AddSingleton<IAsyncPolicy<HttpResponseMessage>>(PollyPolicies.BuildPolicy());
-
-builder.Services.AddTransient<PollyDelegatingHandler>();
 
 builder.Services.AddScoped<BusinessService>();
 builder.Services.AddScoped<UserService>();
@@ -146,7 +144,8 @@ builder.Services.AddRabbitMqConsumer(builder.Configuration);
 builder.Services.AddRabbitMqPublisher(builder.Configuration);
 builder.Services.AddScoped<IRabbitMqMessageConsumer, BusinessRabbitMqConsumer>();
 
-builder.Services.AddHostedService<GetAuthTokenOnStartHosted>();
+builder.Services.AddHostedService<FetchServiceTokenHosted>();
+builder.Services.AddHostedService<FetchClientTokenHosted>();
 builder.Services.AddHostedService<OutboxPublisherBackgroundService>();
 
 builder.Services.AddIdentityHttpActor();

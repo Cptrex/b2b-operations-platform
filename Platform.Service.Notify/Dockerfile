@@ -15,6 +15,9 @@ RUN dotnet publish "Platform.Service.Notify.csproj" -c $BUILD_CONFIGURATION -o /
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 RUN groupadd -r appuser && useradd -r -g appuser appuser
 COPY --from=build /app/publish .
 RUN chown -R appuser:appuser /app

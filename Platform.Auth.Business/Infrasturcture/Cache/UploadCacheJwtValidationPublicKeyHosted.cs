@@ -1,4 +1,4 @@
-﻿using Paltform.Auth.Shared.JwtToken.Contracts;
+﻿using Platform.Auth.Shared.JwtToken.Contracts;
 using Platform.Shared.Cache.Contracts;
 using Platform.Shared.Cache.Keys.Redis;
 

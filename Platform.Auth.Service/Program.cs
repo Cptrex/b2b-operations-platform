@@ -1,5 +1,5 @@
-using Paltform.Auth.Shared.Cryptography;
-using Paltform.Auth.Shared.JwtToken.Extensions;
+using Platform.Auth.Shared.Cryptography;
+using Platform.Auth.Shared.JwtToken.Extensions;
 using Platform.Auth.Service.Services.Hosted;
 using Platform.Auth.Service.Services.ServiceToken;
 using Platform.Auth.Service.Services.ServiceToken.Contracts;
@@ -13,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 var privateKeyPath = builder.Configuration["ServiceJwt:PrivateKeyPath"] ?? "service_private.pem";
 var publicKeyPath = builder.Configuration["ServiceJwt:PublicKeyPath"] ?? "service_public.pem";
 
-if ((!File.Exists(privateKeyPath) || !File.Exists(publicKeyPath)) && builder.Environment.IsDevelopment())
+if ((!File.Exists(privateKeyPath) || !File.Exists(publicKeyPath)))
 {
     RsaKeyPairGenerator.GenerateToken(privateKeyPath, publicKeyPath);
 }

@@ -16,5 +16,5 @@ public sealed class LogDocument
     public string Action { get; set; } = null!;
     public string Source { get; set; } = null!;
     public DateTime AtUtc { get; set; }
-    public object? Payload { get; set; }
+    public BsonDocument? Payload { get; set; }
 }

@@ -131,16 +131,14 @@ builder.Services.AddSingleton<IAsyncPolicy<HttpResponseMessage>>(PollyPolicies.B
 
 builder.Services.AddTransient<PollyDelegatingHandler>();
 
-builder.Services.AddScoped<OrderService>();
-builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-
 builder.Services.AddRedisCacheProvider(builder.Configuration);
 
 builder.Services.AddRabbitMqConsumer(builder.Configuration);
 builder.Services.AddRabbitMqPublisher(builder.Configuration);
 builder.Services.AddScoped<IRabbitMqMessageConsumer, OrdersRabbitMqConsumer>();
 
-builder.Services.AddHostedService<GetAuthTokenOnStartHosted>();
+builder.Services.AddHostedService<FetchServiceTokenHosted>();
+builder.Services.AddHostedService<FetchClientTokenHosted>();
 builder.Services.AddHostedService<OutboxPublisherBackgroundService>();
 
 builder.Services.AddIdentityHttpActor();

@@ -42,33 +42,35 @@ curl http://localhost:5257/api/v1/internal/token/health-check
 ```
 
 ### Auth.Business
+Use the health endpoint for `Platform.Auth.Business`:
 ```bash
-curl http://localhost:8080/api/v1/auth/health-check
+curl http://localhost:8081/api/v1/auth/health-check
 ```
 
 ### Service.Business
+Use the health endpoint for `Platform.Service.Business` (mapped to host port 8082):
 ```bash
-curl http://localhost:8080/api/v1/business/health-check
+curl http://localhost:8082/api/v1/business/health-check
 ```
 
 ### Service.Orders
 ```bash
-curl http://localhost:8080/api/v1/orders/health-check
+curl http://localhost:8083/api/v1/orders/health-check
 ```
 
 ### Service.Notify
 ```bash
-curl http://localhost:8080/api/v1/notify/health-check
+curl http://localhost:8084/api/v1/notify/health-check
 ```
 
 ### Service.Search
 ```bash
-curl http://localhost:8080/api/v1/search/health-check
+curl http://localhost:8085/api/v1/search/health-check
 ```
 
 ### Service.Analytics
 ```bash
-curl http://localhost:8080/api/v1/analytics/health-check
+curl http://localhost:8086/api/v1/analytics/health-check
 ```
 
 ---

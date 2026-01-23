@@ -1,28 +1,37 @@
-﻿namespace Platform.Shared.Results;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace Platform.Shared.Results;
 
 public sealed class Result
 {
-    public bool IsSuccess { get; }
-    public Error? Error { get; }
+    public bool IsSuccess { get; init; }
+    public Error? Error { get; init; }
 
-    private Result()
+    [JsonConstructor]
+    public Result(bool isSuccess, Error? error)
     {
-        IsSuccess = true;
-    }
+        if (isSuccess)
+        {
+            if (error is not null)
+                throw new JsonException("Success result must not have error.");
+        }
+        else
+        {
+            if (error is null)
+                throw new JsonException("Failed result must have error.");
+        }
 
-    private Result(Error error)
-    {
-        IsSuccess = false;
+        IsSuccess = isSuccess;
         Error = error;
     }
 
     public static Result Ok()
     {
-        return new Result();
+        return new(true, null);
     }
-
     public static Result Fail(Error error)
     {
-        return new Result(error);
+        return new(false, error);
     }
 }

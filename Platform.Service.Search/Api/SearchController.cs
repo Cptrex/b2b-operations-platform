@@ -16,11 +16,6 @@ public class SearchController : ControllerBase
         _searchService = searchService;
     }
 
-    [HttpGet("health-check")]
-    public IActionResult HealthCheck()
-    {
-        return Ok("Search Service is running");
-    }
 
     [HttpGet("business")]
     public async Task<IActionResult> SearchBusiness([FromQuery] string name, CancellationToken ct)

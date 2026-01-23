@@ -17,6 +17,7 @@ public class BusinessContext : DbContext
 
     public BusinessContext(DbContextOptions<BusinessContext> options) : base(options)
     {
+        Database.EnsureCreated();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

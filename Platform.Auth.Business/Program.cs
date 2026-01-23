@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using Paltform.Auth.Shared.Cryptography;
-using Paltform.Auth.Shared.JwtToken.Extensions;
+using Platform.Auth.Shared.Cryptography;
+using Platform.Auth.Shared.JwtToken.Extensions;
 using Platform.Auth.Business.Application;
 using Platform.Auth.Business.Domain.Account;
 using Platform.Auth.Business.Infrasturcture.Cache;
@@ -18,7 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 var privateKeyPath = builder.Configuration["ClientJwt:PrivateKeyPath"] ?? "business_private.pem";
 var publicKeyPath = builder.Configuration["ClientJwt:PublicKeyPath"] ?? "business_public.pem";
 
-if ((!File.Exists(privateKeyPath) || !File.Exists(publicKeyPath)) && builder.Environment.IsDevelopment())
+if ((!File.Exists(privateKeyPath) || !File.Exists(publicKeyPath)))
 {
     RsaKeyPairGenerator.GenerateToken(privateKeyPath, publicKeyPath);
 }

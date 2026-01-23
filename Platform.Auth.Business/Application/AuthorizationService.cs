@@ -1,4 +1,4 @@
-﻿using Paltform.Auth.Shared.JwtToken.Contracts;
+﻿using Platform.Auth.Shared.JwtToken.Contracts;
 using Platform.Auth.Business.Domain.Account;
 using Platform.Auth.Business.Infrasturcture.Logging;
 using Platform.Logging.MongoDb;
