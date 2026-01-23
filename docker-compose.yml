@@ -11,6 +11,64 @@ services:
     networks:
       - b2b-net
 
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api/health | grep -q ok"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 15s
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./docker/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./docker/prometheus/b2b-platform-dashboard.json:/var/lib/grafana/dashboards/b2b-platform-dashboard.json:ro
+    networks:
+      - b2b-net
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    restart: always
+    ports:
+      - "8087:8080"
+    privileged: true
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - b2b-net
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    restart: always
+    environment:
+      DATA_SOURCE_NAME: "postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable"
+    networks:
+      - b2b-net
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  redis-exporter:
+    image: oliver006/redis_exporter:latest
+    restart: always
+    environment:
+      REDIS_ADDR: "redis://redis:6379"
+    networks:
+      - b2b-net
+    depends_on:
+      redis:
+        condition: service_healthy
+
   postgres:
     image: postgres:15
     restart: always
@@ -38,6 +96,7 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+      - "15692:15692"
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
       - ./docker/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
@@ -71,7 +130,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: STRONG_PASSWORD
     ports:
-      - "27017:27017"
+      - "27027:27017"
     volumes:
       - mongo-data:/data/db
       - ./docker/mongo/init.js:/docker-entrypoint-initdb.d/init.js:ro
@@ -276,6 +335,7 @@ volumes:
   rabbitmq-data:
   redis-data:
   mongo-data:
+  grafana-data:
 
 networks:
   b2b-net:

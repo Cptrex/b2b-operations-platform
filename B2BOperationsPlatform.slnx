@@ -4,6 +4,7 @@
     <File Path=".gitattributes" />
     <File Path=".gitignore" />
     <File Path="docker-compose.yml" />
+    <File Path="k6_loadtest.js" />
     <File Path="LICENSE.txt" />
     <File Path="README.md" />
     <File Path="README.ru.md" />
@@ -16,14 +17,15 @@
     <File Path="docker/postgres/init.sql" />
   </Folder>
   <Folder Name="/Solution Items/docker/prometheus/">
+    <File Path="docker/prometheus/b2b-platform-dashboard.json" />
     <File Path="docker/prometheus/prometheus.yml" />
   </Folder>
   <Folder Name="/Solution Items/docker/rabbitmq/">
     <File Path="docker/rabbitmq/definitions.json" />
   </Folder>
-  <Project Path="Platform.Auth.Shared/Platform.Auth.Shared.csproj" Id="9c099a90-e3fd-4561-8689-e2a517c5c4b3" />
   <Project Path="Platform.Auth.Business/Platform.Auth.Business.csproj" />
   <Project Path="Platform.Auth.Service/Platform.Auth.Service.csproj" />
+  <Project Path="Platform.Auth.Shared/Platform.Auth.Shared.csproj" Id="9c099a90-e3fd-4561-8689-e2a517c5c4b3" />
   <Project Path="Platform.Identity.Abstractions/Platform.Identity.Abstractions.csproj" Id="d078c32f-6585-422c-ba3d-7adb11627b89" />
   <Project Path="Platform.Identity.Http/Platform.Identity.Http.csproj" Id="902e6aaf-dc11-4401-b88d-fe0ee528d9d5" />
   <Project Path="Platform.Logging.MongoDb/Platform.Logging.MongoDb.csproj" Id="919ead58-1736-4734-87e6-e5173290375b" />
