@@ -39,7 +39,14 @@ public class FetchClientTokenHosted : IHostedService
 
                     if (!string.IsNullOrWhiteSpace(clientKey))
                     {
-                        try { await _cache.SetAsync(AuthRedisKeys.JwtClientPublicKeyV1, clientKey); } catch { }
+                        try
+                        {
+                            await _cache.SetAsync(AuthRedisKeys.JwtClientPublicKeyV1, clientKey);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Warning: failed to read client public key on start: {ex.Message}");
+                        }
                     }
                 }
                 else

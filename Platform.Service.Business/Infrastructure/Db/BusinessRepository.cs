@@ -31,12 +31,12 @@ public class BusinessRepository : IBusinessRepository
 
     public async Task DeleteBusinessAsync(Domain.Business.Business business)
     {
-        await _context.Businesses.Remove(business);
+        _context.Businesses.Remove(business);
     }
 
     public async Task UpdateBusinessAsync(Domain.Business.Business business)
     {
-        await _context.Businesses.ExecuteUpdateAsync(business);
+        _context.Businesses.Update(business);
     }
 
     public async Task DeleteBusinessByIdAsync(string businessKey)
@@ -56,6 +56,6 @@ public class BusinessRepository : IBusinessRepository
 
     public async Task<Domain.Business.Business?> GetByBusinessNameAsync(string businessName)
     {
-        return await _context.Businesses.FirstOrDefault(b => b.BusinessName == businessName);
+        return await _context.Businesses.FirstOrDefaultAsync(b => b.BusinessName == businessName);
     }
 }

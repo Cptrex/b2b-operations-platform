@@ -2,7 +2,7 @@ namespace Platform.Shared.Messaging.Contracts.Events.Business;
 
 public sealed record BusinessCreatedEvent : IEvent
 {
-    public Guid EventId { get; init; }
+    public string EventId { get; init; } = Guid.NewGuid().ToString("D");
     public DateTimeOffset OccuredAt { get; init; }
 
     public string BusinessId { get; init; }

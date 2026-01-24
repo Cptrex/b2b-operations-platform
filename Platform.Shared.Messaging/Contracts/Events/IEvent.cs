@@ -2,6 +2,6 @@
 
 internal interface IEvent
 {
-    Guid EventId { get; init; }
+    string EventId { get; init; }
     DateTimeOffset OccuredAt { get; init; }
 }

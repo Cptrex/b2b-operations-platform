@@ -2,18 +2,18 @@
 
 public sealed record UserCreatedEvent : IEvent
 {
-    public Guid EventId { get; init; }
+    public string EventId { get; init; } = Guid.NewGuid().ToString("D");
     public DateTimeOffset OccuredAt { get; init;  } = DateTimeOffset.UtcNow;
 
     public int UserId { get; init; }
-    public Guid AccountId { get; init; }
+    public string AccountId { get; init; } = Guid.NewGuid().ToString("D");
     public string UserName { get; init; }
     public DateTimeOffset CreatedAt { get; init; }
 
 
     public UserCreatedEvent()
     {
-        EventId = Guid.NewGuid();
+        EventId = Guid.NewGuid().ToString("D");
         OccuredAt = DateTimeOffset.UtcNow;
     }
 }

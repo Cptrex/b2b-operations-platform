@@ -6,7 +6,7 @@ using Platform.Service.Business.Application;
 namespace Platform.Service.Business.Api;
 
 [ApiController]
-[Authorize(Policy = "Internal")]
+[Authorize(Policy = "Client")]
 [Route("api/v1/internal/[controller]")]
 public class UserController : ControllerBase
 {

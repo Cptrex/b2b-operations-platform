@@ -24,9 +24,9 @@ public class FetchClientTokenHosted : IHostedService
 
             if (string.IsNullOrWhiteSpace(clientKey))
             {
-                var authBusinessScheme = _config["AuthBusiness:Scheme"] ?? _config["AuthService:Scheme"] ?? "http";
-                var authBusinessHost = _config["AuthBusiness:Host"] ?? _config["AuthService:Host"] ?? "localhost";
-                var authBusinessPort = _config["AuthBusiness:Port"] ?? _config["AuthService:Port"] ?? "80";
+                var authBusinessScheme = _config["AuthBusiness:Scheme"] ?? "http";
+                var authBusinessHost = _config["AuthBusiness:Host"] ?? "localhost";
+                var authBusinessPort = _config["AuthBusiness:Port"] ?? "80";
 
                 var url = $"{authBusinessScheme}://{authBusinessHost}:{authBusinessPort}/api/v1/keys/client-public";
 
@@ -39,7 +39,14 @@ public class FetchClientTokenHosted : IHostedService
 
                     if (!string.IsNullOrWhiteSpace(clientKey))
                     {
-                        try { await _cache.SetAsync(AuthRedisKeys.JwtClientPublicKeyV1, clientKey); } catch { }
+                        try
+                        {
+                            await _cache.SetAsync(AuthRedisKeys.JwtClientPublicKeyV1, clientKey);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Warning: failed to read client public key on start: {ex.Message}");
+                        }
                     }
                 }
                 else

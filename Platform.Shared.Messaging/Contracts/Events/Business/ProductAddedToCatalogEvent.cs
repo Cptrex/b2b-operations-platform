@@ -2,10 +2,10 @@ namespace Platform.Shared.Messaging.Contracts.Events.Business;
 
 public sealed record ProductAddedToCatalogEvent : IEvent
 {
-    public Guid EventId { get; init; }
+    public string EventId { get; init; } = Guid.NewGuid().ToString("D");
     public DateTimeOffset OccuredAt { get; init; }
 
-    public Guid ProductId { get; init; }
+    public string ProductId { get; init; } = Guid.NewGuid().ToString("D");
     public string BusinessId { get; init; }
     public string ProductName { get; init; }
     public string Description { get; init; }

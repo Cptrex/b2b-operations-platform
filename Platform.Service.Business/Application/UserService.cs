@@ -57,17 +57,17 @@ public class UserService
 
         var userCreatedEvent = new UserCreatedEvent
         {
-            EventId = Guid.NewGuid(),
+            EventId = Guid.NewGuid().ToString("D"),
             OccuredAt = DateTimeOffset.UtcNow,
             UserId = newUser.Id,
-            AccountId = newUser.AccountId,
+            AccountId = newUser.AccountId.ToString("D"),
             UserName = newUser.UserName,
             CreatedAt = DateTimeOffset.FromUnixTimeSeconds(newUser.CreatedAt)
         };
 
         await _context.OutboxMessages.AddAsync(new OutboxMessage
         {
-            EventId = userCreatedEvent.EventId,
+            EventId = Guid.Parse(userCreatedEvent.EventId),
             Type = nameof(UserCreatedEvent),
             RoutingKey = "auth.service.userCreated",
             Payload = JsonSerializer.Serialize(userCreatedEvent),
@@ -111,14 +111,14 @@ public class UserService
 
         var userDeletedEvent = new UserDeletedEvent
         {
-            EventId = Guid.NewGuid(),
+            EventId = Guid.NewGuid().ToString("D"),
             OccuredAt = DateTimeOffset.UtcNow,
             UserId = userId
         };
 
         await _context.OutboxMessages.AddAsync(new OutboxMessage
         {
-            EventId = userDeletedEvent.EventId,
+            EventId = Guid.Parse(userDeletedEvent.EventId),
             Type = nameof(UserDeletedEvent),
             RoutingKey = "auth.service.userDeleted",
             Payload = JsonSerializer.Serialize(userDeletedEvent),

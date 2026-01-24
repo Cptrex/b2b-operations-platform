@@ -59,9 +59,9 @@ public class ProductService
 
         var productAddedEvent = new ProductAddedToCatalogEvent
         {
-            EventId = Guid.NewGuid(),
+            EventId = Guid.NewGuid().ToString("D"),
             OccuredAt = DateTimeOffset.UtcNow,
-            ProductId = product.ProductId,
+            ProductId = product.ProductId.ToString("D"),
             BusinessId = product.BusinessId,
             ProductName = product.ProductName,
             Description = product.Description,
@@ -72,7 +72,7 @@ public class ProductService
 
         await _context.OutboxMessages.AddAsync(new OutboxMessage
         {
-            EventId = productAddedEvent.EventId,
+            EventId = Guid.Parse(productAddedEvent.EventId),
             Type = nameof(ProductAddedToCatalogEvent),
             RoutingKey = "business.productAddedToCatalog",
             Payload = JsonSerializer.Serialize(productAddedEvent),
@@ -113,15 +113,15 @@ public class ProductService
 
         var productRemovedEvent = new ProductRemovedFromCatalogEvent
         {
-            EventId = Guid.NewGuid(),
+            EventId = Guid.NewGuid().ToString("D"),
             OccuredAt = DateTimeOffset.UtcNow,
-            ProductId = product.ProductId,
+            ProductId = product.ProductId.ToString("D"),
             BusinessId = product.BusinessId
         };
 
         await _context.OutboxMessages.AddAsync(new OutboxMessage
         {
-            EventId = productRemovedEvent.EventId,
+            EventId = Guid.Parse(productRemovedEvent.EventId),
             Type = nameof(ProductRemovedFromCatalogEvent),
             RoutingKey = "business.productRemovedFromCatalog",
             Payload = JsonSerializer.Serialize(productRemovedEvent),
@@ -163,9 +163,9 @@ public class ProductService
 
         var productUpdatedEvent = new ProductInfoUpdatedEvent
         {
-            EventId = Guid.NewGuid(),
+            EventId = Guid.NewGuid().ToString("D"),
             OccuredAt = DateTimeOffset.UtcNow,
-            ProductId = product.ProductId,
+            ProductId = product.ProductId.ToString("D"),
             BusinessId = product.BusinessId,
             ProductName = product.ProductName,
             Description = product.Description,
@@ -175,7 +175,7 @@ public class ProductService
 
         await _context.OutboxMessages.AddAsync(new OutboxMessage
         {
-            EventId = productUpdatedEvent.EventId,
+            EventId = Guid.Parse(productUpdatedEvent.EventId),
             Type = nameof(ProductInfoUpdatedEvent),
             RoutingKey = "business.productInfoUpdated",
             Payload = JsonSerializer.Serialize(productUpdatedEvent),
@@ -209,16 +209,16 @@ public class ProductService
 
         var productAvailabilityChangedEvent = new ProductAvailabilityChangedEvent
         {
-            EventId = Guid.NewGuid(),
+            EventId = Guid.NewGuid().ToString("D"),
             OccuredAt = DateTimeOffset.UtcNow,
-            ProductId = product.ProductId,
+            ProductId = product.ProductId.ToString("D"),
             BusinessId = product.BusinessId,
             IsAvailable = product.IsAvailable
         };
 
         await _context.OutboxMessages.AddAsync(new OutboxMessage
         {
-            EventId = productAvailabilityChangedEvent.EventId,
+            EventId = Guid.Parse(productAvailabilityChangedEvent.EventId),
             Type = nameof(ProductAvailabilityChangedEvent),
             RoutingKey = "business.productAvailabilityChanged",
             Payload = JsonSerializer.Serialize(productAvailabilityChangedEvent),

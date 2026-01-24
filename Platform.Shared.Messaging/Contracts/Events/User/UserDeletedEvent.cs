@@ -2,7 +2,7 @@
 
 public sealed record UserDeletedEvent : IEvent
 {
-    public Guid EventId { get; init; }
+    public string EventId { get; init; } = Guid.NewGuid().ToString("D");
     public DateTimeOffset OccuredAt { get; init; }
 
     public int UserId { get; init; }

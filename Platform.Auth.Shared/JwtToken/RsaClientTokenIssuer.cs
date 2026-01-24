@@ -69,6 +69,7 @@ public sealed class RsaClientTokenIssuer : IClientTokenIssuer
         var token = new JwtSecurityToken(
             issuer: issuer,
             claims: claims,
+            audience: "platform",
             expires: expiresAt.UtcDateTime,
             signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.RsaSha256)
         );

@@ -1,4 +1,6 @@
-﻿namespace Platform.Service.Business.Domain.Business;
+﻿using System.Text.Json.Serialization;
+
+namespace Platform.Service.Business.Domain.Business;
 
 public class Business
 {
@@ -7,6 +9,8 @@ public class Business
     public long CreatedAt { get; set; }
 
     private List<User.User> _users = [];
+
+    [JsonIgnore]
     public List<User.User> Users 
     { 
         get 
@@ -27,6 +31,7 @@ public class Business
     }
 
     private List<Product.Product> _products = [];
+    [JsonIgnore]
     public List<Product.Product> Products 
     { 
         get 
@@ -47,6 +52,8 @@ public class Business
     }
 
     private List<Customer.Customer> _customers = [];
+
+    [JsonIgnore]
     public List<Customer.Customer> Customers 
     { 
         get 
@@ -68,7 +75,7 @@ public class Business
 
     private Business() 
     {
-        BusinessId = Guid.Empty;
+        BusinessId = Guid.Empty.ToString("D");
         BusinessName = string.Empty;
         _users = [];
         _products = [];
@@ -77,7 +84,7 @@ public class Business
 
     public Business( string businessName)
     {
-        BusinessId = Guid.NewGuid();
+        BusinessId = Guid.NewGuid().ToString("D");
         BusinessName = businessName;
         CreatedAt = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         _users = [];

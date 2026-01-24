@@ -32,10 +32,12 @@ public class OrderService
             throw new ArgumentNullException(nameof(businessId));
         }
 
-        if (customerId == Guid.Empty)
-        {
-            throw new ArgumentException("CustomerId cannot be empty", nameof(customerId));
-        }
+        customerId = Guid.NewGuid();
+
+        //if (customerId == Guid.Empty)
+        //{
+        //    throw new ArgumentException("CustomerId cannot be empty", nameof(customerId));
+        //}
 
         if (string.IsNullOrWhiteSpace(customerName))
         {
@@ -65,7 +67,7 @@ public class OrderService
 
         var orderCreatedEvent = new OrderCreatedEvent
         {
-            EventId = Guid.NewGuid(),
+            EventId = Guid.NewGuid().ToString("D"),
             OccuredAt = DateTimeOffset.UtcNow,
             OrderId = order.OrderId,
             BusinessId = order.BusinessId,
@@ -79,7 +81,7 @@ public class OrderService
 
         await _context.OutboxMessages.AddAsync(new OutboxMessage
         {
-            EventId = orderCreatedEvent.EventId,
+            EventId = Guid.Parse(orderCreatedEvent.EventId),
             Type = nameof(OrderCreatedEvent),
             RoutingKey = "orders.orderCreated",
             Payload = JsonSerializer.Serialize(orderCreatedEvent),
@@ -88,10 +90,10 @@ public class OrderService
 
         var customerAddedEvent = new CustomerAddedToBusinessEvent
         {
-            EventId = Guid.NewGuid(),
+            EventId = Guid.NewGuid().ToString("D"),
             OccuredAt = DateTimeOffset.UtcNow,
             BusinessId = order.BusinessId,
-            CustomerId = order.CustomerId,
+            CustomerId = order.CustomerId.ToString("D"),
             CustomerName = order.CustomerName,
             CustomerEmail = order.CustomerEmail,
             CustomerPhone = order.CustomerPhone
@@ -99,7 +101,7 @@ public class OrderService
 
         await _context.OutboxMessages.AddAsync(new OutboxMessage
         {
-            EventId = customerAddedEvent.EventId,
+            EventId = Guid.Parse(customerAddedEvent.EventId),
             Type = nameof(CustomerAddedToBusinessEvent),
             RoutingKey = "orders.customerAddedToBusiness",
             Payload = JsonSerializer.Serialize(customerAddedEvent),
@@ -134,15 +136,15 @@ public class OrderService
 
         var orderConfirmedEvent = new OrderConfirmedEvent
         {
-            EventId = Guid.NewGuid(),
+            EventId = Guid.NewGuid().ToString("D"),
             OccuredAt = DateTimeOffset.UtcNow,
-            OrderId = order.OrderId,
+            OrderId = order.OrderId.ToString("D"),
             ConfirmedAt = DateTimeOffset.FromUnixTimeSeconds(order.ConfirmedAt ?? 0)
         };
 
         await _context.OutboxMessages.AddAsync(new OutboxMessage
         {
-            EventId = orderConfirmedEvent.EventId,
+            EventId = Guid.Parse(orderConfirmedEvent.EventId),
             Type = nameof(OrderConfirmedEvent),
             RoutingKey = "orders.orderConfirmed",
             Payload = JsonSerializer.Serialize(orderConfirmedEvent),
@@ -176,15 +178,15 @@ public class OrderService
 
         var orderCancelledEvent = new OrderCancelledEvent
         {
-            EventId = Guid.NewGuid(),
+            EventId = Guid.NewGuid().ToString("D"),
             OccuredAt = DateTimeOffset.UtcNow,
-            OrderId = order.OrderId,
+            OrderId = order.OrderId.ToString("D"),
             CancelledAt = DateTimeOffset.FromUnixTimeSeconds(order.CancelledAt ?? 0)
         };
 
         await _context.OutboxMessages.AddAsync(new OutboxMessage
         {
-            EventId = orderCancelledEvent.EventId,
+            EventId = Guid.Parse(orderCancelledEvent.EventId),
             Type = nameof(OrderCancelledEvent),
             RoutingKey = "orders.orderCancelled",
             Payload = JsonSerializer.Serialize(orderCancelledEvent),
@@ -218,15 +220,15 @@ public class OrderService
 
         var paymentStatusUpdatedEvent = new OrderPaymentStatusUpdatedEvent
         {
-            EventId = Guid.NewGuid(),
+            EventId = Guid.NewGuid().ToString("D"),
             OccuredAt = DateTimeOffset.UtcNow,
-            OrderId = order.OrderId,
+            OrderId = order.OrderId.ToString("D"),
             PaymentStatus = newStatus.ToString()
         };
 
         await _context.OutboxMessages.AddAsync(new OutboxMessage
         {
-            EventId = paymentStatusUpdatedEvent.EventId,
+            EventId = Guid.Parse(paymentStatusUpdatedEvent.EventId),
             Type = nameof(OrderPaymentStatusUpdatedEvent),
             RoutingKey = "orders.paymentStatusUpdated",
             Payload = JsonSerializer.Serialize(paymentStatusUpdatedEvent),
@@ -260,15 +262,15 @@ public class OrderService
 
         var deliveryStatusUpdatedEvent = new OrderDeliveryStatusUpdatedEvent
         {
-            EventId = Guid.NewGuid(),
+            EventId = Guid.NewGuid().ToString("D"),
             OccuredAt = DateTimeOffset.UtcNow,
-            OrderId = order.OrderId,
+            OrderId = order.OrderId.ToString("D"),
             DeliveryStatus = newStatus.ToString()
         };
 
         await _context.OutboxMessages.AddAsync(new OutboxMessage
         {
-            EventId = deliveryStatusUpdatedEvent.EventId,
+            EventId = Guid.Parse(deliveryStatusUpdatedEvent.EventId),
             Type = nameof(OrderDeliveryStatusUpdatedEvent),
             RoutingKey = "orders.deliveryStatusUpdated",
             Payload = JsonSerializer.Serialize(deliveryStatusUpdatedEvent),

@@ -76,7 +76,7 @@ public class AccountService
 
         var accountCreatedEvent = new AccountCreatedEvent
         {
-            EventId = Guid.NewGuid(),
+            EventId = Guid.NewGuid().ToString("D"),
             OccuredAt = DateTimeOffset.UtcNow,
             AccountId = createdAccount.Id,
             BusinessId = createdAccount.BusinessId,
@@ -88,7 +88,7 @@ public class AccountService
 
         await _context.OutboxMessages.AddAsync(new OutboxMessage
         {
-            EventId = accountCreatedEvent.EventId,
+            EventId = Guid.Parse(accountCreatedEvent.EventId),
             Type = nameof(AccountCreatedEvent),
             RoutingKey = "auth.business.accountCreated",
             Payload = JsonSerializer.Serialize(accountCreatedEvent),
@@ -125,7 +125,7 @@ public class AccountService
 
         var accountDeletedEvent = new AccountDeletedEvent
         {
-            EventId = Guid.NewGuid(),
+            EventId = Guid.NewGuid().ToString("D"),
             OccuredAt = DateTimeOffset.UtcNow,
             AccountId = accountId,
             BusinessId = businessId
@@ -133,7 +133,7 @@ public class AccountService
 
         await _context.OutboxMessages.AddAsync(new OutboxMessage
         {
-            EventId = accountDeletedEvent.EventId,
+            EventId = Guid.Parse(accountDeletedEvent.EventId),
             Type = nameof(AccountDeletedEvent),
             RoutingKey = "auth.business.accountDeleted",
             Payload = JsonSerializer.Serialize(accountDeletedEvent),

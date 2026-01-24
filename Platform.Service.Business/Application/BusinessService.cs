@@ -48,7 +48,7 @@ public class BusinessService
 
         var businessCreatedEvent = new BusinessCreatedEvent
         {
-            EventId = Guid.NewGuid(),
+            EventId = Guid.NewGuid().ToString("D"),
             OccuredAt = DateTimeOffset.UtcNow,
             BusinessId = newBusiness.BusinessId,
             BusinessName = newBusiness.BusinessName,
@@ -57,7 +57,7 @@ public class BusinessService
 
         await _context.OutboxMessages.AddAsync(new OutboxMessage
         {
-            EventId = businessCreatedEvent.EventId,
+            EventId = Guid.Parse(businessCreatedEvent.EventId),
             Type = nameof(BusinessCreatedEvent),
             RoutingKey = "business.businessCreated",
             Payload = JsonSerializer.Serialize(businessCreatedEvent),
@@ -89,14 +89,14 @@ public class BusinessService
 
         var businessDeletedEvent = new BusinessDeletedEvent
         {
-            EventId = Guid.NewGuid(),
+            EventId = Guid.NewGuid().ToString("D"),
             OccuredAt = DateTimeOffset.UtcNow,
             BusinessId = businessId
         };
 
         await _context.OutboxMessages.AddAsync(new OutboxMessage
         {
-            EventId = businessDeletedEvent.EventId,
+            EventId = Guid.Parse(businessDeletedEvent.EventId),
             Type = nameof(BusinessDeletedEvent),
             RoutingKey = "business.businessDeleted",
             Payload = JsonSerializer.Serialize(businessDeletedEvent),
@@ -147,7 +147,7 @@ public class BusinessService
 
         var customerAddedEvent = new CustomerAddedEvent
         {
-            EventId = Guid.NewGuid(),
+            EventId = Guid.NewGuid().ToString("D"),
             OccuredAt = DateTimeOffset.UtcNow,
             CustomerId = customer.CustomerId,
             BusinessId = customer.BusinessId,
@@ -159,7 +159,7 @@ public class BusinessService
 
         await _context.OutboxMessages.AddAsync(new OutboxMessage
         {
-            EventId = customerAddedEvent.EventId,
+            EventId = Guid.Parse(customerAddedEvent.EventId),
             Type = nameof(CustomerAddedEvent),
             RoutingKey = "business.customerAdded",
             Payload = JsonSerializer.Serialize(customerAddedEvent),

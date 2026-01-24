@@ -49,7 +49,7 @@ public class SearchRabbitMqConsumer : IRabbitMqMessageConsumer
 
         await _searchContext.InboxMessages.AddAsync(new()
         {
-            EventId = eventData.EventId,
+            EventId = Guid.Parse(eventData.EventId),
             Type = nameof(BusinessCreatedEvent),
             Payload = json,
             OccurredAt = eventData.OccuredAt
@@ -83,7 +83,7 @@ public class SearchRabbitMqConsumer : IRabbitMqMessageConsumer
 
         await _searchContext.InboxMessages.AddAsync(new()
             {
-                EventId = eventData.EventId,
+                EventId = Guid.Parse(eventData.EventId),
                 Type = nameof(UserCreatedEvent),
                 Payload = json,
                 OccurredAt = eventData.OccuredAt
@@ -98,7 +98,7 @@ public class SearchRabbitMqConsumer : IRabbitMqMessageConsumer
 
         var user = new Domain.User.User(
             eventData.UserId,
-            eventData.AccountId,
+            Guid.Parse(eventData.AccountId),
             eventData.UserName,
             eventData.CreatedAt.ToUnixTimeSeconds()
         );
@@ -118,7 +118,7 @@ public class SearchRabbitMqConsumer : IRabbitMqMessageConsumer
 
         await _searchContext.InboxMessages.AddAsync(new()
         {
-            EventId = eventData.EventId,
+            EventId = Guid.Parse(eventData.EventId),
             Type = nameof(AccountCreatedEvent),
             Payload = json,
             OccurredAt = eventData.OccuredAt
@@ -155,7 +155,7 @@ public class SearchRabbitMqConsumer : IRabbitMqMessageConsumer
 
         await _searchContext.InboxMessages.AddAsync(new()
             {
-                EventId = eventData.EventId,
+                EventId = Guid.Parse(eventData.EventId),
                 Type = nameof(AccountDeletedEvent),
                 Payload = json,
                 OccurredAt = eventData.OccuredAt

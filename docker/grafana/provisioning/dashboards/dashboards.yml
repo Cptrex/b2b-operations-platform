@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: "B2B"
+    orgId: 1
+    folder: "B2B"
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /var/lib/grafana/dashboards

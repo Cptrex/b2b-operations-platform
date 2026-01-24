@@ -51,8 +51,7 @@ public class BusinessRabbitMqConsumer : IRabbitMqMessageConsumer
             return;
         }
 
-        var existingInboxMessage = await _businessContext.InboxMessages
-            .FirstOrDefaultAsync(m => m.EventId == eventData.EventId && m.Consumer == "AccountCreated", ct);
+        var existingInboxMessage = await _businessContext.InboxMessages.FirstOrDefaultAsync(m => m.EventId == Guid.Parse(eventData.EventId) && m.Consumer == "AccountCreated", ct);
 
         if (existingInboxMessage != null)
         {
@@ -61,7 +60,7 @@ public class BusinessRabbitMqConsumer : IRabbitMqMessageConsumer
 
         await _businessContext.InboxMessages.AddAsync(new()
         {
-            EventId = eventData.EventId,
+            EventId = Guid.Parse(eventData.EventId),
             ProcessedAt = DateTime.UtcNow,
             Consumer = "AccountCreated"
         }, ct);
@@ -78,8 +77,7 @@ public class BusinessRabbitMqConsumer : IRabbitMqMessageConsumer
             return;
         }
 
-        var existingInboxMessage = await _businessContext.InboxMessages
-            .FirstOrDefaultAsync(m => m.EventId == eventData.EventId && m.Consumer == "AccountDeleted", ct);
+        var existingInboxMessage = await _businessContext.InboxMessages.FirstOrDefaultAsync(m => m.EventId == Guid.Parse(eventData.EventId) && m.Consumer == "AccountDeleted", ct);
 
         if (existingInboxMessage != null)
         {
@@ -105,7 +103,7 @@ public class BusinessRabbitMqConsumer : IRabbitMqMessageConsumer
 
         await _businessContext.InboxMessages.AddAsync(new()
         {
-            EventId = eventData.EventId,
+            EventId = Guid.Parse(eventData.EventId),
             ProcessedAt = DateTime.UtcNow,
             Consumer = "AccountDeleted"
         }, ct);
@@ -122,8 +120,7 @@ public class BusinessRabbitMqConsumer : IRabbitMqMessageConsumer
             return;
         }
 
-        var existingInboxMessage = await _businessContext.InboxMessages
-            .FirstOrDefaultAsync(m => m.EventId == eventData.EventId && m.Consumer == "CustomerAddedToBusiness", ct);
+        var existingInboxMessage = await _businessContext.InboxMessages.FirstOrDefaultAsync(m => m.EventId == Guid.Parse(eventData.EventId) && m.Consumer == "CustomerAddedToBusiness", ct);
 
         if (existingInboxMessage != null)
         {
@@ -131,7 +128,7 @@ public class BusinessRabbitMqConsumer : IRabbitMqMessageConsumer
         }
 
         await _businessService.AddCustomerAsync(
-            eventData.CustomerId,
+            Guid.Parse(eventData.CustomerId),
             eventData.BusinessId,
             eventData.CustomerName,
             eventData.CustomerEmail,
@@ -140,7 +137,7 @@ public class BusinessRabbitMqConsumer : IRabbitMqMessageConsumer
 
         await _businessContext.InboxMessages.AddAsync(new()
         {
-            EventId = eventData.EventId,
+            EventId = Guid.Parse(eventData.EventId),
             ProcessedAt = DateTime.UtcNow,
             Consumer = "CustomerAddedToBusiness"
         }, ct);

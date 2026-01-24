@@ -29,7 +29,7 @@ services:
     volumes:
       - grafana-data:/var/lib/grafana
       - ./docker/grafana/provisioning:/etc/grafana/provisioning:ro
-      - ./docker/prometheus/b2b-platform-dashboard.json:/var/lib/grafana/dashboards/b2b-platform-dashboard.json:ro
+      - ./docker/grafana/b2b-platform-dashboard.json:/var/lib/grafana/dashboards/b2b-platform-dashboard.json:ro
     networks:
       - b2b-net
 

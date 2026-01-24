@@ -17,7 +17,6 @@
     <File Path="docker/postgres/init.sql" />
   </Folder>
   <Folder Name="/Solution Items/docker/prometheus/">
-    <File Path="docker/prometheus/b2b-platform-dashboard.json" />
     <File Path="docker/prometheus/prometheus.yml" />
   </Folder>
   <Folder Name="/Solution Items/docker/rabbitmq/">

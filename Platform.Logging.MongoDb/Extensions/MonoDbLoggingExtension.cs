@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using Platform.Logging.MongoDb.Contracts;
 
@@ -20,7 +21,9 @@ public static class MongoDbLoggingExtension
                 var opt = sp.GetRequiredService<IOptions<MongoDbOptions>>().Value;
 
                 if (string.IsNullOrWhiteSpace(opt.ConnectionString))
+                {
                     throw new InvalidOperationException("MongoDB:ConnectionString is empty");
+                }
 
                 return new MongoClient(opt.ConnectionString);
             });

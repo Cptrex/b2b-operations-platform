@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Platform.Service.Business.Domain.Product;
 
 public class Product
@@ -11,6 +13,7 @@ public class Product
     public long CreatedAt { get; set; }
     public long? UpdatedAt { get; set; }
 
+    [JsonIgnore]
     public Business.Business Business { get; set; }
 
     private Product()
