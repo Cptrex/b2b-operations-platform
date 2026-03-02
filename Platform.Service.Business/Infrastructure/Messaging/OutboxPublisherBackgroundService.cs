@@ -10,9 +10,7 @@ public class OutboxPublisherBackgroundService : BackgroundService
     private readonly ILogger<OutboxPublisherBackgroundService> _logger;
     private readonly TimeSpan _pollingInterval = TimeSpan.FromSeconds(5);
 
-    public OutboxPublisherBackgroundService(
-        IServiceProvider serviceProvider,
-        ILogger<OutboxPublisherBackgroundService> logger)
+    public OutboxPublisherBackgroundService(IServiceProvider serviceProvider, ILogger<OutboxPublisherBackgroundService> logger)
     {
         _serviceProvider = serviceProvider;
         _logger = logger;
